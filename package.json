@@ -6,12 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:jobs": "node src/scripts/seed-jobs.mjs",
+    "generate:seo": "node src/scripts/generate-100-jobs.mjs"
   },
   "dependencies": {
+    "axios": "^1.13.6",
+    "dotenv": "^17.3.1",
+    "mammoth": "^1.11.0",
+    "mongoose": "^9.2.3",
     "next": "16.1.6",
+    "pdf-parse": "^2.4.5",
+    "pdfjs-dist": "^5.5.207",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
