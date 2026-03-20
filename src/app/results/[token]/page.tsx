@@ -2,10 +2,11 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import ShareReport from '@/components/ShareReport';
 import { dbConnect } from '@/database/mongodb/connect';
 import { Report } from '@/database/mongodb/schemas/Report';
 import { Job } from '@/database/mongodb/schemas/Job';
-import { getDetailedAnalysis, getToneClasses } from '@/lib/detailedAnalysis';
+import { getDetailedAnalysis, getToneClasses, type DetailedAnalysisOutput } from '@/lib/detailedAnalysis';
 
 type PageProps = {
   params: Promise<{ token: string }>;
@@ -69,6 +70,47 @@ type SectorInsights = {
   distribution: Array<{ label: string; count: number; tone: DistributionTone }>;
   topSkills: Array<{ skill: string; count: number }>;
 };
+
+function resolveExistingDetailedAnalysis(
+  reportDetailedAnalysis?: AnalysisJson['detailedAnalysis'],
+  roleDetailedAnalysis?: Partial<DetailedAnalysisOutput> | null
+): Partial<DetailedAnalysisOutput> | undefined {
+  if (!reportDetailedAnalysis && !roleDetailedAnalysis) {
+    return undefined;
+  }
+
+  return {
+    executiveTakeaway: reportDetailedAnalysis?.executiveTakeaway || roleDetailedAnalysis?.executiveTakeaway,
+    workComposition:
+      reportDetailedAnalysis?.workComposition && reportDetailedAnalysis.workComposition.length > 0
+        ? reportDetailedAnalysis.workComposition
+        : roleDetailedAnalysis?.workComposition,
+    scoreDrivers:
+      reportDetailedAnalysis?.scoreDrivers && reportDetailedAnalysis.scoreDrivers.length > 0
+        ? reportDetailedAnalysis.scoreDrivers
+        : roleDetailedAnalysis?.scoreDrivers,
+    durableAdvantage:
+      roleDetailedAnalysis?.durableAdvantage && roleDetailedAnalysis.durableAdvantage.length > 0
+        ? roleDetailedAnalysis.durableAdvantage
+        : reportDetailedAnalysis?.durableAdvantage,
+    marketSignals:
+      roleDetailedAnalysis?.marketSignals && roleDetailedAnalysis.marketSignals.length > 0
+        ? roleDetailedAnalysis.marketSignals
+        : reportDetailedAnalysis?.marketSignals,
+    roleEvolution:
+      roleDetailedAnalysis?.roleEvolution && roleDetailedAnalysis.roleEvolution.length > 0
+        ? roleDetailedAnalysis.roleEvolution
+        : reportDetailedAnalysis?.roleEvolution,
+    ninetyDayPlan:
+      roleDetailedAnalysis?.ninetyDayPlan && roleDetailedAnalysis.ninetyDayPlan.length > 0
+        ? roleDetailedAnalysis.ninetyDayPlan
+        : reportDetailedAnalysis?.ninetyDayPlan,
+    toolingFocus:
+      reportDetailedAnalysis?.toolingFocus && reportDetailedAnalysis.toolingFocus.length > 0
+        ? reportDetailedAnalysis.toolingFocus
+        : roleDetailedAnalysis?.toolingFocus,
+  };
+}
 
 const FALLBACK_SECTOR_PEERS: Record<string, SectorPeerDocument[]> = {
   Technology: [
@@ -242,12 +284,20 @@ export default async function ResultPage({ params }: PageProps) {
 
   const analysis = (report.analysisJson || {}) as AnalysisJson;
 
-  type RelatedJobType = { slug: string; title: string; sector?: string; automationRisk?: number; riskLevel?: string; futureSkills?: string[] };
+  type RelatedJobType = {
+    slug: string;
+    title: string;
+    sector?: string;
+    automationRisk?: number;
+    riskLevel?: string;
+    futureSkills?: string[];
+    detailedAnalysis?: Partial<DetailedAnalysisOutput>;
+  };
   let relatedJob: RelatedJobType | null = null;
   let sectorPeers: SectorPeerDocument[] = [];
   try {
     relatedJob = await Job.findOne({ title: report.jobTitle })
-      .select('title slug sector automationRisk riskLevel futureSkills')
+      .select('title slug sector automationRisk riskLevel futureSkills detailedAnalysis')
       .lean();
     if (relatedJob?.sector) {
       const dbPeers = await Job.find({ sector: relatedJob.sector })
@@ -281,7 +331,7 @@ export default async function ResultPage({ params }: PageProps) {
     futureSkills: analysis.futureSkills,
     timelineAssessment: analysis.timelineAssessment,
     summary: analysis.summary,
-    existingDetailedAnalysis: analysis.detailedAnalysis,
+    existingDetailedAnalysis: resolveExistingDetailedAnalysis(analysis.detailedAnalysis, relatedJob?.detailedAnalysis),
   });
 
   return (
