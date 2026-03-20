@@ -737,6 +737,13 @@ export default async function ResultPage({ params }: PageProps) {
           </div>
         )}
 
+        {/* Share Component */}
+        <ShareReport 
+          title={report.jobTitle} 
+          token={token} 
+          automationRisk={analysis.automationRiskScore || 0} 
+        />
+
         {/* CTA */}
         <div className="border-[2px] border-ink bg-ink p-10 md:p-16 text-parchment text-center relative overflow-hidden">
           <div className="absolute inset-x-0 top-0 h-[8px] bg-accent" />
