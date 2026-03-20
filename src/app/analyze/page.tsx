@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
@@ -62,6 +63,7 @@ type AnalysisResponse = {
 };
 
 export default function AnalyzePage() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [sectors, setSectors] = useState<string[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -154,10 +156,9 @@ export default function AnalyzePage() {
       }
 
       const data: AnalysisResponse = await response.json();
-      setAnalysisResult(data);
 
       if (email.trim()) {
-        await fetch('/api/newsletter', {
+        void fetch('/api/newsletter', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -166,10 +167,12 @@ export default function AnalyzePage() {
             jobTitle: selectedJob?.title,
             sector: selectedSector,
           }),
-        });
+        }).catch(() => undefined);
       }
 
+      setAnalysisResult(data);
       setStep(4);
+      router.push(data.shareLink);
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : 'Failed to generate report');
     } finally {
@@ -217,7 +220,7 @@ export default function AnalyzePage() {
                 {step === 1 && 'Step 1 of 4: Select your industry'}
                 {step === 2 && 'Step 2 of 4: Choose your job title'}
                 {step === 3 && 'Step 3 of 4: Add details & run analysis'}
-                {step === 4 && 'Step 4 of 4: Your report is ready'}
+                {step === 4 && 'Step 4 of 4: Opening your full report'}
               </p>
             </div>
           </div>
@@ -374,37 +377,10 @@ export default function AnalyzePage() {
 
           {step === 4 && analysisResult && (
             <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">Your Analysis</h2>
-
-              <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl p-8 border border-indigo-100 mb-6">
-                <div className="text-6xl font-bold text-indigo-600 mb-2">{analysisResult.analysis.automationRiskScore}%</div>
-                <p className="text-xl font-bold text-slate-900 mb-1">{analysisResult.analysis.riskLevel} Risk</p>
-                <p className="text-slate-700">{analysisResult.analysis.summary}</p>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <h3 className="font-bold text-slate-900 mb-3">🔴 High-Risk Tasks</h3>
-                  <ul className="space-y-2 text-slate-700">
-                    {analysisResult.analysis.highRiskTasks.map((task, index) => (
-                      <li key={index}>• {task}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-900 mb-3">🟢 Future Skills</h3>
-                  <ul className="space-y-2 text-slate-700">
-                    {analysisResult.analysis.futureSkills.map((skill, index) => (
-                      <li key={index}>• {skill}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              <div className="rounded-xl border border-slate-200 p-4 mb-6">
-                <p className="text-sm text-slate-600 mb-2">Timeline assessment</p>
-                <p className="font-medium text-slate-900">{analysisResult.analysis.timelineAssessment}</p>
-              </div>
+              <h2 className="text-2xl font-bold text-slate-900 mb-3">Opening your full shareable report</h2>
+              <p className="text-slate-600 mb-6">
+                Your analysis is complete. If the redirect does not happen automatically, open the full report below.
+              </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
