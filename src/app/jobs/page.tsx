@@ -40,28 +40,29 @@ export default async function JobsPage() {
   }
 
   return (
-    <main className="w-full min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <main className="w-full min-h-screen bg-parchment text-ink relative">
+      <div className="grain-overlay" />
       <Navigation />
-      <section className="pt-28 pb-16 max-w-7xl mx-auto px-6">
+      <section className="pt-28 pb-16 max-w-7xl mx-auto px-6 relative z-10">
         {jobs.length > 0 ? (
           <JobsExplorer jobs={jobs} />
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="sm:col-span-2 lg:col-span-3 rounded-2xl border border-red-200 bg-red-50 p-8 text-center">
-              <p className="text-red-900 font-semibold mb-2">Unable to Load Jobs</p>
-              <p className="text-red-700 text-sm mb-4">
+            <div className="sm:col-span-2 lg:col-span-3 border-[2px] border-accent bg-accent/10 p-8 text-center text-ink">
+              <p className="font-display text-3xl uppercase tracking-tight mb-2 text-accent">Unable to Load Jobs</p>
+              <p className="text-sm font-bold uppercase tracking-widest mb-4 opacity-80">
                 Database connection failed. This is typically due to MongoDB Atlas IP whitelist restrictions.
               </p>
-              <div className="text-left text-red-700 text-sm bg-white rounded p-4 border border-red-200">
-                <p className="font-mono mb-2">Troubleshooting steps:</p>
-                <ol className="space-y-2 list-decimal list-inside">
-                  <li>Go to MongoDB Atlas cluster settings</li>
-                  <li>Add your public IP to the IP whitelist (or use 0.0.0.0/0 for development)</li>
-                  <li>Restart the Next.js dev server</li>
-                </ol>
+              <div className="text-left bg-parchment p-6 border-[2px] border-accent">
+                <p className="font-bold uppercase tracking-widest text-xs mb-3">Troubleshooting steps:</p>
+                <ul className="space-y-3 font-medium opacity-90">
+                  <li className="flex gap-2"><span className="text-accent font-bold">1.</span>Go to MongoDB Atlas cluster settings</li>
+                  <li className="flex gap-2"><span className="text-accent font-bold">2.</span>Add your public IP to the IP whitelist (or use 0.0.0.0/0 for development)</li>
+                  <li className="flex gap-2"><span className="text-accent font-bold">3.</span>Restart the Next.js dev server</li>
+                </ul>
               </div>
-              <p className="text-red-700 text-xs mt-4">
-                For now, you can still view individual jobs directly (e.g., <Link href="/jobs/software-engineer" className="underline">/jobs/software-engineer</Link>)
+              <p className="text-xs font-bold uppercase tracking-widest mt-6 opacity-60">
+                For now, you can still view individual jobs directly (e.g., <Link href="/jobs/software-engineer" className="underline hover:text-accent">/jobs/software-engineer</Link>)
               </p>
             </div>
           </div>

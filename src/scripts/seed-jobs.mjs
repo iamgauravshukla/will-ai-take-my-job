@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 dotenv.config({ path: '.env.local' });
 
 const MONGODB_URI = process.env.MONGODB_URI;
+console.log('Using MongoDB URI:', MONGODB_URI ? 'Connected' : 'Not Set');
 if (!MONGODB_URI) {
   throw new Error('MONGODB_URI is required in .env.local');
 }
