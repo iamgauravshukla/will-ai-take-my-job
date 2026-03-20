@@ -2,10 +2,11 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import ShareReport from '@/components/ShareReport';
 import { dbConnect } from '@/database/mongodb/connect';
 import { Report } from '@/database/mongodb/schemas/Report';
 import { Job } from '@/database/mongodb/schemas/Job';
-import { getDetailedAnalysis, getToneClasses } from '@/lib/detailedAnalysis';
+import { getDetailedAnalysis, getToneClasses, type DetailedAnalysisOutput } from '@/lib/detailedAnalysis';
 
 type PageProps = {
   params: Promise<{ token: string }>;
@@ -69,6 +70,47 @@ type SectorInsights = {
   distribution: Array<{ label: string; count: number; tone: DistributionTone }>;
   topSkills: Array<{ skill: string; count: number }>;
 };
+
+function resolveExistingDetailedAnalysis(
+  reportDetailedAnalysis?: AnalysisJson['detailedAnalysis'],
+  roleDetailedAnalysis?: Partial<DetailedAnalysisOutput> | null
+): Partial<DetailedAnalysisOutput> | undefined {
+  if (!reportDetailedAnalysis && !roleDetailedAnalysis) {
+    return undefined;
+  }
+
+  return {
+    executiveTakeaway: reportDetailedAnalysis?.executiveTakeaway || roleDetailedAnalysis?.executiveTakeaway,
+    workComposition:
+      reportDetailedAnalysis?.workComposition && reportDetailedAnalysis.workComposition.length > 0
+        ? reportDetailedAnalysis.workComposition
+        : roleDetailedAnalysis?.workComposition,
+    scoreDrivers:
+      reportDetailedAnalysis?.scoreDrivers && reportDetailedAnalysis.scoreDrivers.length > 0
+        ? reportDetailedAnalysis.scoreDrivers
+        : roleDetailedAnalysis?.scoreDrivers,
+    durableAdvantage:
+      roleDetailedAnalysis?.durableAdvantage && roleDetailedAnalysis.durableAdvantage.length > 0
+        ? roleDetailedAnalysis.durableAdvantage
+        : reportDetailedAnalysis?.durableAdvantage,
+    marketSignals:
+      roleDetailedAnalysis?.marketSignals && roleDetailedAnalysis.marketSignals.length > 0
+        ? roleDetailedAnalysis.marketSignals
+        : reportDetailedAnalysis?.marketSignals,
+    roleEvolution:
+      roleDetailedAnalysis?.roleEvolution && roleDetailedAnalysis.roleEvolution.length > 0
+        ? roleDetailedAnalysis.roleEvolution
+        : reportDetailedAnalysis?.roleEvolution,
+    ninetyDayPlan:
+      roleDetailedAnalysis?.ninetyDayPlan && roleDetailedAnalysis.ninetyDayPlan.length > 0
+        ? roleDetailedAnalysis.ninetyDayPlan
+        : reportDetailedAnalysis?.ninetyDayPlan,
+    toolingFocus:
+      reportDetailedAnalysis?.toolingFocus && reportDetailedAnalysis.toolingFocus.length > 0
+        ? reportDetailedAnalysis.toolingFocus
+        : roleDetailedAnalysis?.toolingFocus,
+  };
+}
 
 const FALLBACK_SECTOR_PEERS: Record<string, SectorPeerDocument[]> = {
   Technology: [
@@ -207,9 +249,8 @@ function RiskLandscape({
           const isCurrent = band.key === currentBand.key;
           const tc = getToneClasses(band.tone);
           return (
-            <div key={band.key} className={`border-[2px] p-4 text-center ${
-              isCurrent ? 'border-ink bg-ink text-parchment' : 'border-ink bg-transparent text-ink'
-            }`}>
+            <div key={band.key} className={`border-[2px] p-4 text-center ${isCurrent ? 'border-ink bg-ink text-parchment' : 'border-ink bg-transparent text-ink'
+              }`}>
               <div className={`mx-auto mb-3 h-2 w-8 border-[2px] border-ink ${tc.bar}`} />
               <p className={`font-bold uppercase tracking-widest text-xs mb-1 ${isCurrent ? 'opacity-70' : 'opacity-60'}`}>{band.key}</p>
               <p className="font-display text-4xl leading-none mb-1">{count}</p>
@@ -242,12 +283,20 @@ export default async function ResultPage({ params }: PageProps) {
 
   const analysis = (report.analysisJson || {}) as AnalysisJson;
 
-  type RelatedJobType = { slug: string; title: string; sector?: string; automationRisk?: number; riskLevel?: string; futureSkills?: string[] };
+  type RelatedJobType = {
+    slug: string;
+    title: string;
+    sector?: string;
+    automationRisk?: number;
+    riskLevel?: string;
+    futureSkills?: string[];
+    detailedAnalysis?: Partial<DetailedAnalysisOutput>;
+  };
   let relatedJob: RelatedJobType | null = null;
   let sectorPeers: SectorPeerDocument[] = [];
   try {
     relatedJob = await Job.findOne({ title: report.jobTitle })
-      .select('title slug sector automationRisk riskLevel futureSkills')
+      .select('title slug sector automationRisk riskLevel futureSkills detailedAnalysis')
       .lean();
     if (relatedJob?.sector) {
       const dbPeers = await Job.find({ sector: relatedJob.sector })
@@ -281,7 +330,7 @@ export default async function ResultPage({ params }: PageProps) {
     futureSkills: analysis.futureSkills,
     timelineAssessment: analysis.timelineAssessment,
     summary: analysis.summary,
-    existingDetailedAnalysis: analysis.detailedAnalysis,
+    existingDetailedAnalysis: resolveExistingDetailedAnalysis(analysis.detailedAnalysis, relatedJob?.detailedAnalysis),
   });
 
   return (
@@ -290,10 +339,10 @@ export default async function ResultPage({ params }: PageProps) {
       <Navigation />
 
       <section className="pt-32 pb-24 max-w-5xl mx-auto px-6 relative z-10">
-        
+
         {/* Premium hero card (Brutalist style) */}
         <div className="mb-12 border-[2px] border-ink bg-ink text-parchment p-8 md:p-12">
-          
+
           <div className="flex flex-wrap items-center gap-3 mb-6">
             <span className="border-[2px] border-accent bg-accent text-white px-3 py-1 text-xs font-bold uppercase tracking-widest">
               Personalized Analysis
@@ -360,7 +409,7 @@ export default async function ResultPage({ params }: PageProps) {
             <h2 className="font-display text-4xl uppercase tracking-tight">Sector Benchmark</h2>
             <span className="border-[2px] border-ink bg-accent text-white px-3 py-1 font-bold uppercase tracking-widest text-xs">Live</span>
           </div>
-          
+
           <div className="grid gap-4 sm:grid-cols-3 mb-8">
             <div className="border-[2px] border-ink p-6">
               <p className="text-xs font-bold uppercase tracking-widest opacity-60 mb-2">Sector Average</p>
@@ -409,12 +458,10 @@ export default async function ResultPage({ params }: PageProps) {
           <p className="font-bold uppercase tracking-widest text-xs opacity-60 mb-8 border-l-[2px] border-ink pl-4">The key factors driving the automation exposure estimate for this role.</p>
           <div className="grid md:grid-cols-3 gap-6">
             {detailedAnalysis.scoreDrivers.map((driver, index) => (
-              <div key={index} className={`border-[2px] p-6 ${
-                driver.strength === 'Primary' ? 'border-accent bg-accent/5' : 'border-ink bg-transparent'
-              }`}>
-                <span className={`inline-block border-[2px] px-3 py-1 text-xs font-bold uppercase tracking-widest mb-4 ${
-                  driver.strength === 'Primary' ? 'border-accent bg-accent text-white' : 'border-ink text-ink bg-transparent'
+              <div key={index} className={`border-[2px] p-6 ${driver.strength === 'Primary' ? 'border-accent bg-accent/5' : 'border-ink bg-transparent'
                 }`}>
+                <span className={`inline-block border-[2px] px-3 py-1 text-xs font-bold uppercase tracking-widest mb-4 ${driver.strength === 'Primary' ? 'border-accent bg-accent text-white' : 'border-ink text-ink bg-transparent'
+                  }`}>
                   {driver.strength} DRIVER
                 </span>
                 <h3 className="font-display text-2xl uppercase tracking-wide mb-3">{driver.title}</h3>
@@ -518,7 +565,7 @@ export default async function ResultPage({ params }: PageProps) {
           <div className="border-[2px] border-ink p-8 bg-ink text-parchment">
             <h3 className="font-display text-3xl uppercase tracking-tight mb-4 border-b-[2px] border-parchment pb-2">What This Means</h3>
             <p className="text-sm font-medium leading-relaxed opacity-90 uppercase tracking-wide">
-              Your score indicates the likelihood that AI will automate parts of your role. Focus on developing human-centric skills 
+              Your score indicates the likelihood that AI will automate parts of your role. Focus on developing human-centric skills
               like leadership, strategic thinking, and communication to remain irreplaceable.
             </p>
           </div>

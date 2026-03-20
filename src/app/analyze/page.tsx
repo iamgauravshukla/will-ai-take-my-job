@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
@@ -62,6 +63,7 @@ type AnalysisResponse = {
 };
 
 export default function AnalyzePage() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [sectors, setSectors] = useState<string[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -154,10 +156,9 @@ export default function AnalyzePage() {
       }
 
       const data: AnalysisResponse = await response.json();
-      setAnalysisResult(data);
 
       if (email.trim()) {
-        await fetch('/api/newsletter', {
+        void fetch('/api/newsletter', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -166,10 +167,12 @@ export default function AnalyzePage() {
             jobTitle: selectedJob?.title,
             sector: selectedSector,
           }),
-        });
+        }).catch(() => undefined);
       }
 
+      setAnalysisResult(data);
       setStep(4);
+      router.push(data.shareLink);
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : 'Failed to generate report');
     } finally {
@@ -201,18 +204,16 @@ export default function AnalyzePage() {
               {[1, 2, 3, 4].map((s) => (
                 <div key={s} className="flex items-center flex-1 last:flex-none">
                   <div
-                    className={`w-12 h-12 flex items-center justify-center font-display text-2xl border-[2px] transition-all ${
-                      s <= step 
-                        ? 'bg-ink border-ink text-parchment' 
+                    className={`w-12 h-12 flex items-center justify-center font-display text-2xl border-[2px] transition-all ${s <= step
+                        ? 'bg-ink border-ink text-parchment'
                         : 'bg-transparent border-ink/20 text-ink/40'
-                    }`}
+                      }`}
                   >
                     {s}
                   </div>
                   {s < 4 && (
-                    <div className={`flex-1 mx-4 h-[2px] transition-all ${
-                      s < step ? 'bg-ink' : 'bg-ink/20'
-                    }`} />
+                    <div className={`flex-1 mx-4 h-[2px] transition-all ${s < step ? 'bg-ink' : 'bg-ink/20'
+                      }`} />
                   )}
                 </div>
               ))}
@@ -226,7 +227,7 @@ export default function AnalyzePage() {
                 {step === 1 && 'Step 1 of 4: Select your industry'}
                 {step === 2 && 'Step 2 of 4: Choose your job title'}
                 {step === 3 && 'Step 3 of 4: Add details & run analysis'}
-                {step === 4 && 'Step 4 of 4: Your report is ready'}
+                {step === 4 && 'Step 4 of 4: Opening your full report'}
               </p>
             </div>
           </div>
@@ -249,11 +250,10 @@ export default function AnalyzePage() {
                       setSelectedSector(sector);
                       setStep(2);
                     }}
-                    className={`p-5 border-[2px] transition-all text-left font-display text-xl tracking-wide uppercase ${
-                      selectedSector === sector
+                    className={`p-5 border-[2px] transition-all text-left font-display text-xl tracking-wide uppercase ${selectedSector === sector
                         ? 'border-ink bg-ink text-parchment'
                         : 'border-ink/20 bg-transparent text-ink hover:border-ink hover:bg-ink/5'
-                    }`}
+                      }`}
                   >
                     {sector}
                   </button>
@@ -274,11 +274,10 @@ export default function AnalyzePage() {
                   <button
                     key={job._id}
                     onClick={() => setSelectedJobId(job._id)}
-                    className={`w-full text-left p-5 transition-all outline-none ${
-                      selectedJobId === job._id
+                    className={`w-full text-left p-5 transition-all outline-none ${selectedJobId === job._id
                         ? 'bg-ink text-parchment'
                         : 'hover:bg-ink/5'
-                    }`}
+                      }`}
                   >
                     <p className="font-bold uppercase tracking-widest text-sm mb-1">{job.title}</p>
                     <p className={`text-xs line-clamp-1 ${selectedJobId === job._id ? 'opacity-70' : 'opacity-60'}`}>{job.description}</p>
