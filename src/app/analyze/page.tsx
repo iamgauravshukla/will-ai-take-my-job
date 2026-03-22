@@ -193,30 +193,37 @@ export default function AnalyzePage() {
   };
 
   return (
-    <main className="w-full min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <main className="w-full min-h-screen bg-parchment text-ink relative">
+      <div className="grain-overlay" />
       <Navigation />
 
-      <div className="pt-24 pb-12">
+      <div className="pt-32 pb-24 relative z-10">
         <div className="max-w-3xl mx-auto px-6">
-          <div className="mb-12">
-            <div className="flex items-center justify-between mb-8">
+          <div className="mb-16">
+            <div className="flex items-center justify-between mb-12">
               {[1, 2, 3, 4].map((s) => (
-                <div key={s} className="flex items-center flex-1">
+                <div key={s} className="flex items-center flex-1 last:flex-none">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
-                      s <= step ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-600'
-                    }`}
+                    className={`w-12 h-12 flex items-center justify-center font-display text-2xl border-[2px] transition-all ${s <= step
+                        ? 'bg-ink border-ink text-parchment'
+                        : 'bg-transparent border-ink/20 text-ink/40'
+                      }`}
                   >
                     {s}
                   </div>
-                  {s < 4 && <div className="flex-1 mx-2 h-1 bg-slate-200"></div>}
+                  {s < 4 && (
+                    <div className={`flex-1 mx-4 h-[2px] transition-all ${s < step ? 'bg-ink' : 'bg-ink/20'
+                      }`} />
+                  )}
                 </div>
               ))}
             </div>
 
             <div className="text-center">
-              <h1 className="text-4xl font-bold text-slate-900 mb-2">Analyze Your Career Risk</h1>
-              <p className="text-slate-600">
+              <h1 className="font-display text-5xl md:text-6xl uppercase tracking-tight mb-4">
+                Analyze Your Career Risk
+              </h1>
+              <p className="text-lg opacity-80 font-medium tracking-wide uppercase">
                 {step === 1 && 'Step 1 of 4: Select your industry'}
                 {step === 2 && 'Step 2 of 4: Choose your job title'}
                 {step === 3 && 'Step 3 of 4: Add details & run analysis'}
@@ -226,15 +233,15 @@ export default function AnalyzePage() {
           </div>
 
           {error && (
-            <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
-              {error}
+            <div className="mb-8 border-[2px] border-accent bg-accent/10 px-6 py-4 text-accent font-bold uppercase tracking-widest text-sm">
+              ERROR: {error}
             </div>
           )}
 
           {step === 1 && (
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">What&apos;s your industry?</h2>
-              {sectorsLoading && sectors.length === 0 && <p className="mb-4 text-slate-500">Loading industries...</p>}
+            <div className="bg-parchment border-[2px] border-ink p-8 md:p-12">
+              <h2 className="font-display text-3xl uppercase tracking-tight mb-8">What is your industry?</h2>
+              {sectorsLoading && sectors.length === 0 && <p className="mb-6 opacity-60 font-bold uppercase tracking-widest text-xs">Loading industries...</p>}
               <div className="grid md:grid-cols-2 gap-4">
                 {sectors.map((sector) => (
                   <button
@@ -243,11 +250,10 @@ export default function AnalyzePage() {
                       setSelectedSector(sector);
                       setStep(2);
                     }}
-                    className={`p-4 rounded-xl border-2 transition-all text-left font-medium ${
-                      selectedSector === sector
-                        ? 'border-indigo-600 bg-indigo-100 text-indigo-950 ring-2 ring-indigo-200'
-                        : 'border-slate-200 bg-white text-slate-800 hover:border-indigo-300 hover:bg-indigo-50'
-                    }`}
+                    className={`p-5 border-[2px] transition-all text-left font-display text-xl tracking-wide uppercase ${selectedSector === sector
+                        ? 'border-ink bg-ink text-parchment'
+                        : 'border-ink/20 bg-transparent text-ink hover:border-ink hover:bg-ink/5'
+                      }`}
                   >
                     {sector}
                   </button>
@@ -257,40 +263,39 @@ export default function AnalyzePage() {
           )}
 
           {step === 2 && (
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Choose your job title</h2>
-              <p className="text-slate-600 mb-6">Showing roles in {selectedSector}</p>
+            <div className="bg-parchment border-[2px] border-ink p-8 md:p-12">
+              <h2 className="font-display text-3xl uppercase tracking-tight mb-2">Choose your job title</h2>
+              <p className="opacity-60 mb-8 font-bold uppercase tracking-widest text-xs">Showing roles in {selectedSector}</p>
 
-              <div className="max-h-80 overflow-auto rounded-xl border border-slate-200 divide-y divide-slate-100 mb-6">
-                {jobsLoading && <p className="p-4 text-slate-500">Loading jobs...</p>}
-                {!jobsLoading && jobs.length === 0 && <p className="p-4 text-slate-500">No jobs found in this sector yet.</p>}
+              <div className="max-h-[400px] overflow-auto border-[2px] border-ink/20 divide-y-[2px] divide-ink/10 mb-8 custom-scrollbar">
+                {jobsLoading && <p className="p-6 opacity-60 font-bold uppercase tracking-widest text-xs">Loading jobs...</p>}
+                {!jobsLoading && jobs.length === 0 && <p className="p-6 opacity-60 font-bold uppercase tracking-widest text-xs">No jobs found in this sector yet.</p>}
                 {jobs.map((job) => (
                   <button
                     key={job._id}
                     onClick={() => setSelectedJobId(job._id)}
-                    className={`w-full text-left p-4 hover:bg-slate-50 transition ${
-                      selectedJobId === job._id
-                        ? 'bg-indigo-100 border-l-4 border-indigo-600'
-                        : 'bg-white border-l-4 border-transparent hover:bg-slate-50'
-                    }`}
+                    className={`w-full text-left p-5 transition-all outline-none ${selectedJobId === job._id
+                        ? 'bg-ink text-parchment'
+                        : 'hover:bg-ink/5'
+                      }`}
                   >
-                    <p className={`font-semibold ${selectedJobId === job._id ? 'text-indigo-950' : 'text-slate-900'}`}>{job.title}</p>
-                    <p className={`text-sm line-clamp-1 ${selectedJobId === job._id ? 'text-indigo-700' : 'text-slate-600'}`}>{job.description}</p>
+                    <p className="font-bold uppercase tracking-widest text-sm mb-1">{job.title}</p>
+                    <p className={`text-xs line-clamp-1 ${selectedJobId === job._id ? 'opacity-70' : 'opacity-60'}`}>{job.description}</p>
                   </button>
                 ))}
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => setStep(1)}
-                  className="px-6 py-3 rounded-lg border border-slate-300 font-bold text-slate-700 hover:bg-slate-50"
+                  className="px-8 py-4 border-[2px] border-ink font-bold uppercase tracking-widest text-ink hover:bg-ink hover:text-parchment transition-colors text-sm"
                 >
                   Back
                 </button>
                 <button
                   onClick={() => selectedJobId && setStep(3)}
                   disabled={!selectedJobId || jobsLoading}
-                  className="flex-1 px-6 py-3 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-700 disabled:opacity-50"
+                  className="flex-1 px-8 py-4 border-[2px] border-ink font-bold uppercase tracking-widest bg-accent text-white hover:bg-accent-hover disabled:opacity-50 disabled:hover:bg-accent transition-colors text-sm"
                 >
                   Next
                 </button>
@@ -299,17 +304,18 @@ export default function AnalyzePage() {
           )}
 
           {step === 3 && (
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Add your details</h2>
-              <p className="text-slate-600 mb-6">Optional details improve analysis quality.</p>
+            <div className="bg-parchment border-[2px] border-ink p-8 md:p-12">
+              <h2 className="font-display text-3xl uppercase tracking-tight mb-2">Add your details</h2>
+              <p className="opacity-60 mb-8 font-bold uppercase tracking-widest text-xs">Optional details improve analysis quality.</p>
 
-              <div className="space-y-4 mb-6">
+              <div className="space-y-6 mb-10">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Analysis Provider</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-ink mb-3">Analysis Provider</label>
                   <select
                     value={provider}
                     onChange={(event) => setProvider(event.target.value as 'gemini' | 'openai')}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    className="w-full px-5 py-4 bg-transparent border-[2px] border-ink focus:outline-none focus:border-accent font-bold text-sm appearance-none"
+                    style={{ borderRadius: 0 }}
                   >
                     <option value="gemini">Gemini</option>
                     <option value="openai">OpenAI</option>
@@ -317,57 +323,62 @@ export default function AnalyzePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Email (optional)</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-ink mb-3">Email (optional)</label>
                   <input
                     type="email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
                     placeholder="you@example.com"
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    className="w-full px-5 py-4 bg-transparent border-[2px] border-ink focus:outline-none focus:border-accent font-medium text-sm placeholder:opacity-40"
+                    style={{ borderRadius: 0 }}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Upload Resume (PDF/DOCX)</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-ink mb-3">Upload Resume (PDF/DOCX)</label>
                   <input
                     type="file"
                     accept=".pdf,.docx"
                     onChange={(event) => setResumeFile(event.target.files?.[0] || null)}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-600 file:mr-4 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-2 file:text-indigo-700"
+                    className="w-full px-5 py-3 bg-transparent border-[2px] border-ink focus:outline-none focus:border-accent font-medium text-sm file:mr-6 file:border-[2px] file:border-ink file:bg-transparent file:px-4 file:py-2 file:font-bold file:uppercase file:tracking-widest file:text-xs file:text-ink hover:file:bg-ink hover:file:text-parchment file:cursor-pointer file:transition-colors"
+                    style={{ borderRadius: 0 }}
                   />
-                  <p className="text-xs text-slate-500 mt-2">If no file is uploaded, text input below is used.</p>
+                  <p className="text-xs opacity-60 mt-3 font-medium">If no file is uploaded, text input below is used.</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Resume text / role description (optional)</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-ink mb-3">Resume text / role description (optional)</label>
                   <textarea
                     value={resumeText}
                     onChange={(event) => setResumeText(event.target.value)}
                     placeholder="Paste your top responsibilities, tools, and current focus areas..."
-                    rows={8}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    rows={6}
+                    className="w-full px-5 py-4 bg-transparent border-[2px] border-ink focus:outline-none focus:border-accent font-medium text-sm placeholder:opacity-40"
+                    style={{ borderRadius: 0 }}
                   />
                 </div>
               </div>
 
-              <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 mb-6">
-                <p className="text-sm text-slate-600">
-                  Analyzing for <span className="font-semibold text-slate-900">{selectedJob?.title || 'Selected role'}</span> in{' '}
-                  <span className="font-semibold text-slate-900">{selectedSector}</span>
+              <div className="border-[2px] border-ink bg-ink/5 p-5 mb-8">
+                <p className="text-sm font-medium">
+                  ANALYZING ROLE:{' '}
+                  <span className="font-bold uppercase tracking-widest mx-1">{selectedJob?.title || 'Selected role'}</span>
+                  IN SECTOR:{' '}
+                  <span className="font-bold uppercase tracking-widest ml-1">{selectedSector}</span>
                 </p>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => setStep(2)}
-                  className="px-6 py-3 rounded-lg border border-slate-300 font-bold text-slate-700 hover:bg-slate-50"
+                  className="px-8 py-4 border-[2px] border-ink font-bold uppercase tracking-widest text-ink hover:bg-ink hover:text-parchment transition-colors text-sm"
                 >
                   Back
                 </button>
                 <button
                   onClick={submitAnalysis}
                   disabled={loading || !selectedJobId}
-                  className="flex-1 px-6 py-3 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-700 disabled:opacity-50"
+                  className="flex-1 px-8 py-4 border-[2px] border-ink font-bold uppercase tracking-widest bg-accent text-white hover:bg-accent-hover transition-colors text-sm disabled:opacity-50 disabled:hover:bg-accent"
                 >
                   {loading ? 'Generating Report...' : 'Generate Report'}
                 </button>
@@ -376,22 +387,67 @@ export default function AnalyzePage() {
           )}
 
           {step === 4 && analysisResult && (
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
-              <h2 className="text-2xl font-bold text-slate-900 mb-3">Opening your full shareable report</h2>
-              <p className="text-slate-600 mb-6">
-                Your analysis is complete. If the redirect does not happen automatically, open the full report below.
-              </p>
+            <div className="bg-parchment border-[2px] border-ink p-8 md:p-12">
+              <h2 className="font-display text-4xl uppercase tracking-tight mb-8">Your Analysis</h2>
+
+              <div className="bg-ink text-parchment border-[2px] border-ink p-8 md:p-10 mb-8">
+                <div className="font-display text-8xl md:text-9xl text-accent mb-4 leading-none">
+                  {analysisResult.analysis.automationRiskScore}%
+                </div>
+                <p className="font-display leading-none text-4xl uppercase tracking-tight mb-6">
+                  {analysisResult.analysis.riskLevel} Risk
+                </p>
+                <p className="text-lg opacity-80 leading-relaxed font-medium">
+                  {analysisResult.analysis.summary}
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8 mb-10">
+                <div>
+                  <h3 className="font-display text-2xl uppercase tracking-tight mb-4 flex items-center gap-3">
+                    <span className="w-4 h-4 bg-accent border-[2px] border-ink shrink-0" />
+                    High-Risk Tasks
+                  </h3>
+                  <ul className="space-y-3 font-medium opacity-80">
+                    {analysisResult.analysis.highRiskTasks.map((task, index) => (
+                      <li key={index} className="flex gap-3">
+                        <span className="font-bold mt-0.5">•</span>
+                        <span>{task}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="font-display text-2xl uppercase tracking-tight mb-4 flex items-center gap-3">
+                    <span className="w-4 h-4 bg-[#81B69D] border-[2px] border-ink shrink-0" />
+                    Future Skills
+                  </h3>
+                  <ul className="space-y-3 font-medium opacity-80">
+                    {analysisResult.analysis.futureSkills.map((skill, index) => (
+                      <li key={index} className="flex gap-3">
+                        <span className="font-bold mt-0.5">•</span>
+                        <span>{skill}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className="border-[2px] border-ink p-6 mb-10 bg-ink/5">
+                <p className="font-bold uppercase tracking-widest text-xs opacity-60 mb-2">Timeline assessment</p>
+                <p className="font-bold text-lg">{analysisResult.analysis.timelineAssessment}</p>
+              </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   href={`/results/${analysisResult.shareToken}`}
-                  className="flex-1 text-center px-6 py-3 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-700"
+                  className="flex-1 flex items-center justify-center px-8 py-4 border-[2px] border-ink font-bold uppercase tracking-widest bg-accent text-white hover:bg-accent-hover transition-colors text-sm text-center"
                 >
                   Open Shareable Report
                 </Link>
                 <button
                   onClick={resetFlow}
-                  className="px-6 py-3 rounded-lg border border-slate-300 font-bold text-slate-700 hover:bg-slate-50"
+                  className="px-8 py-4 border-[2px] border-ink font-bold uppercase tracking-widest text-ink hover:bg-ink hover:text-parchment transition-colors text-sm"
                 >
                   Analyze Another Role
                 </button>

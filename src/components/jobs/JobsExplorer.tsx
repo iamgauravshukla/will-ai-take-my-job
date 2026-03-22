@@ -19,31 +19,31 @@ type JobsExplorerProps = {
 function getRiskTone(score: number) {
   if (score >= 70) {
     return {
-      bar: 'bg-red-500',
-      badge: 'bg-red-100 text-red-700',
+      bar: 'bg-accent border-l-[2px] border-ink',
+      badge: 'bg-accent text-white border-[2px] border-ink',
       label: 'Very High',
     };
   }
 
   if (score >= 55) {
     return {
-      bar: 'bg-amber-500',
-      badge: 'bg-amber-100 text-amber-700',
+      bar: 'bg-[#E5B25D] border-l-[2px] border-ink',
+      badge: 'bg-[#E5B25D] text-ink border-[2px] border-ink',
       label: 'High',
     };
   }
 
   if (score >= 40) {
     return {
-      bar: 'bg-slate-500',
-      badge: 'bg-slate-100 text-slate-700',
+      bar: 'bg-slate-400 border-l-[2px] border-ink',
+      badge: 'bg-parchment text-ink border-[2px] border-ink',
       label: 'Medium',
     };
   }
 
   return {
-    bar: 'bg-emerald-500',
-    badge: 'bg-emerald-100 text-emerald-700',
+    bar: 'bg-[#81B69D] border-l-[2px] border-ink',
+    badge: 'bg-[#81B69D] text-ink border-[2px] border-ink',
     label: 'Low',
   };
 }
@@ -104,61 +104,66 @@ export default function JobsExplorer({ jobs }: JobsExplorerProps) {
 
   return (
     <>
-      <section className="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-6 py-10 text-white shadow-2xl shadow-slate-300/30 md:px-10 md:py-12">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(251,191,36,0.18),_transparent_38%),radial-gradient(circle_at_left,_rgba(99,102,241,0.22),_transparent_42%)]" />
-        <div className="relative grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+      <section className="border-[2px] border-ink bg-ink px-6 py-10 md:px-12 md:py-16 text-parchment overflow-hidden">
+        <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
           <div>
-            <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-amber-200">
+            <span className="inline-flex border-[2px] border-accent bg-accent text-white px-3 py-1 font-bold uppercase tracking-widest text-xs">
               Role Library
             </span>
-            <h1 className="mt-5 max-w-3xl text-4xl font-black tracking-tight text-white md:text-5xl">
-              Explore job risk profiles with search, sector context, and deeper role-by-role analysis.
+            <h1 className="mt-5 max-w-3xl font-display text-5xl md:text-7xl uppercase tracking-tight leading-none text-parchment">
+              Explore Job Profiles And AI Risk
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300 md:text-lg">
+            <p className="mt-6 max-w-2xl text-lg font-medium opacity-80 uppercase tracking-wide">
               Search across the job library, compare roles within the same sector, and open full AI automation reports for any position.
             </p>
 
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Roles tracked</p>
-                <p className="mt-2 text-3xl font-black text-white">{jobs.length}</p>
+            <div className="mt-10 grid gap-4 grid-cols-3 border-y-[2px] border-parchment py-6">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest opacity-60">Roles Tracked</p>
+                <p className="mt-2 font-display text-5xl md:text-6xl text-accent">{jobs.length}</p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Sectors</p>
-                <p className="mt-2 text-3xl font-black text-white">{Math.max(0, sectors.length - 1)}</p>
+              <div className="border-x-[2px] border-parchment px-4 md:px-6">
+                <p className="text-xs font-bold uppercase tracking-widest opacity-60">Sectors</p>
+                <p className="mt-2 font-display text-5xl md:text-6xl text-accent">{Math.max(0, sectors.length - 1)}</p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Avg. risk</p>
-                <p className="mt-2 text-3xl font-black text-white">{averageRisk}%</p>
+              <div className="pl-4 md:pl-6">
+                <p className="text-xs font-bold uppercase tracking-widest opacity-60">Avg. Risk</p>
+                <p className="mt-2 font-display text-5xl md:text-6xl text-accent">{averageRisk}%</p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/10 p-5 backdrop-blur-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Quick filters</p>
+          <div className="border-[2px] border-parchment p-6 md:p-8 bg-ink text-parchment relative">
+            <div className="absolute top-0 right-0 p-3">
+              <span className="border-[2px] border-parchment px-2 py-1 text-[10px] font-bold uppercase tracking-widest bg-parchment text-ink">FILTER</span>
+            </div>
+            
+            <p className="text-sm font-bold uppercase tracking-widest opacity-80 mb-6 border-b-[2px] border-parchment pb-2 inline-block">Refine Results</p>
 
-            <div className="mt-4 space-y-4">
+            <div className="space-y-5">
               <label className="block">
-                <span className="mb-2 block text-sm font-medium text-slate-200">Search roles</span>
+                <span className="mb-2 block text-xs font-bold uppercase tracking-widest opacity-80">Search Roles</span>
                 <input
                   type="search"
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="Search title, sector, or description"
-                  className="w-full rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-amber-300 focus:outline-none"
+                  placeholder="Keyword, sector..."
+                  className="w-full border-[2px] border-parchment bg-transparent px-4 py-3 text-sm text-parchment placeholder:opacity-50 focus:border-accent focus:outline-none appearance-none"
+                  style={{ borderRadius: 0 }}
                 />
               </label>
 
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-5 sm:grid-cols-2">
                 <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-slate-200">Sector</span>
+                  <span className="mb-2 block text-xs font-bold uppercase tracking-widest opacity-80">Sector</span>
                   <select
                     value={selectedSector}
                     onChange={(event) => setSelectedSector(event.target.value)}
-                    className="w-full rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-sm text-white focus:border-amber-300 focus:outline-none"
+                    className="w-full border-[2px] border-parchment bg-transparent px-4 py-3 text-sm text-parchment focus:border-accent focus:outline-none appearance-none"
+                    style={{ borderRadius: 0 }}
                   >
                     {sectors.map((sector) => (
-                      <option key={sector} value={sector} className="bg-slate-900 text-white">
+                      <option key={sector} value={sector} className="bg-ink text-parchment">
                         {sector}
                       </option>
                     ))}
@@ -166,15 +171,16 @@ export default function JobsExplorer({ jobs }: JobsExplorerProps) {
                 </label>
 
                 <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-slate-200">Sort by</span>
+                  <span className="mb-2 block text-xs font-bold uppercase tracking-widest opacity-80">Sort Default</span>
                   <select
                     value={sortBy}
                     onChange={(event) => setSortBy(event.target.value as 'title' | 'risk-desc' | 'risk-asc')}
-                    className="w-full rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-sm text-white focus:border-amber-300 focus:outline-none"
+                    className="w-full border-[2px] border-parchment bg-transparent px-4 py-3 text-sm text-parchment focus:border-accent focus:outline-none appearance-none"
+                    style={{ borderRadius: 0 }}
                   >
-                    <option value="title" className="bg-slate-900 text-white">Title A-Z</option>
-                    <option value="risk-desc" className="bg-slate-900 text-white">Highest risk first</option>
-                    <option value="risk-asc" className="bg-slate-900 text-white">Lowest risk first</option>
+                    <option value="title" className="bg-ink text-parchment">Title A-Z</option>
+                    <option value="risk-desc" className="bg-ink text-parchment">Highest Risk First</option>
+                    <option value="risk-asc" className="bg-ink text-parchment">Lowest Risk First</option>
                   </select>
                 </label>
               </div>
@@ -184,24 +190,24 @@ export default function JobsExplorer({ jobs }: JobsExplorerProps) {
       </section>
 
       <section className="mt-8">
-        <div className="flex flex-col gap-4 rounded-[1.75rem] border border-slate-200 bg-white/90 p-5 shadow-lg shadow-slate-200/50 md:flex-row md:items-center md:justify-between md:p-6">
+        <div className="flex flex-col gap-6 border-[2px] border-ink bg-parchment p-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Browse faster</p>
-            <p className="mt-2 text-xl font-bold text-slate-900">
-              {filteredJobs.length} role{filteredJobs.length === 1 ? '' : 's'} match your current filters.
+            <p className="text-xs font-bold uppercase tracking-widest opacity-60">Status</p>
+            <p className="mt-1 font-display text-3xl uppercase tracking-tight leading-none text-ink">
+              Showing {filteredJobs.length} Role{filteredJobs.length === 1 ? '' : 's'}
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-3">
             {sectors.slice(0, 7).map((sector) => (
               <button
                 key={sector}
                 type="button"
                 onClick={() => setSelectedSector(sector)}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                className={`border-[2px] border-ink px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors ${
                   selectedSector === sector
-                    ? 'bg-slate-900 text-white'
-                    : 'border border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white'
+                    ? 'bg-ink text-parchment'
+                    : 'bg-transparent text-ink hover:bg-ink/5'
                 }`}
               >
                 {sector}
@@ -221,45 +227,46 @@ export default function JobsExplorer({ jobs }: JobsExplorerProps) {
                 <Link
                   key={job._id}
                   href={`/jobs/${job.slug}`}
-                  className="group rounded-[1.6rem] border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/60 transition hover:-translate-y-1 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-100/60"
+                  className="group flex flex-col justify-between border-[2px] border-ink bg-parchment p-6 transition-colors hover:bg-ink hover:text-parchment"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{job.sector}</p>
-                      <h2 className="mt-3 text-xl font-bold tracking-tight text-slate-900 transition group-hover:text-indigo-700">
-                        {job.title}
-                      </h2>
+                  <div>
+                    <div className="flex justify-between items-start gap-4 mb-4">
+                      <p className="text-xs font-bold uppercase tracking-widest max-w-[60%] truncate opacity-60 group-hover:opacity-100">{job.sector}</p>
+                      <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-widest shrink-0 ${riskTone.badge} group-hover:border-parchment group-hover:text-ink`}>
+                        {riskTone.label}
+                      </span>
                     </div>
-                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${riskTone.badge}`}>
-                      {riskTone.label}
-                    </span>
+
+                    <h2 className="font-display text-4xl leading-none uppercase tracking-tight text-ink group-hover:text-parchment mb-4">
+                      {job.title}
+                    </h2>
+                    <div className="h-[2px] w-full bg-ink/10 group-hover:bg-parchment/20 mb-4" />
+                    <p className="line-clamp-3 text-sm font-medium leading-relaxed opacity-80 group-hover:opacity-90 mb-6 uppercase tracking-wide">
+                      {job.description}
+                    </p>
                   </div>
 
-                  <p className="mt-4 line-clamp-3 text-sm leading-6 text-slate-600">{job.description}</p>
-
-                  <div className="mt-6">
-                    <div className="mb-2 flex items-center justify-between text-sm">
-                      <span className="font-medium text-slate-500">Automation exposure</span>
-                      <span className="font-bold text-slate-900">{job.automationRisk}%</span>
+                  <div className="mt-auto">
+                    <div className="mb-2 flex items-end justify-between">
+                      <span className="text-xs font-bold uppercase tracking-widest opacity-60 group-hover:opacity-100">Automation Exposure</span>
+                      <span className="font-display text-4xl leading-none">{job.automationRisk}%</span>
                     </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                      <div className={`h-full ${riskTone.bar}`} style={{ width: `${job.automationRisk}%` }} />
+                    <div className="flex h-3 w-full border-[2px] border-ink bg-transparent group-hover:border-parchment">
+                      <div className={`h-full border-r-[2px] border-ink group-hover:border-parchment transition-all ${riskTone.bar.split(' ')[0]}`} style={{ width: `${job.automationRisk}%` }} />
                     </div>
-                  </div>
 
-                  <div className="mt-6 flex items-center justify-between text-sm">
-                    <span className="font-semibold text-indigo-600">Open full analysis</span>
-                    <span className="text-slate-400 transition group-hover:translate-x-1">→</span>
+                    <div className="mt-6 flex items-center justify-between">
+                      <span className="text-xs font-bold uppercase tracking-widest group-hover:text-accent">Open Analysis →</span>
+                    </div>
                   </div>
                 </Link>
               );
             })}
           </div>
         ) : (
-          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-10 text-center shadow-sm shadow-slate-200/60">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">No matches</p>
-            <h2 className="mt-3 text-2xl font-bold text-slate-900">No roles fit the current search yet.</h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">
+          <div className="border-[2px] border-ink bg-parchment p-12 text-center">
+            <h2 className="font-display text-5xl uppercase tracking-tight mt-2 text-ink">0 Matches Found</h2>
+            <p className="mx-auto mt-4 max-w-xl text-lg font-medium opacity-80 uppercase tracking-widest">
               Try a broader title, clear the sector filter, or sort differently to explore more roles.
             </p>
             <button
@@ -269,9 +276,9 @@ export default function JobsExplorer({ jobs }: JobsExplorerProps) {
                 setSelectedSector('All');
                 setSortBy('title');
               }}
-              className="mt-6 inline-flex items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
+              className="mt-8 border-[2px] border-ink bg-ink text-parchment px-8 py-4 text-sm font-bold uppercase tracking-widest hover:bg-accent hover:border-accent transition-colors"
             >
-              Reset filters
+              Reset Filters
             </button>
           </div>
         )}
