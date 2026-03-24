@@ -305,18 +305,6 @@ export default function AnalyzePage() {
 
               <div className="space-y-4 mb-6">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Analysis Provider</label>
-                  <select
-                    value={provider}
-                    onChange={(event) => setProvider(event.target.value as 'gemini' | 'openai')}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600"
-                  >
-                    <option value="gemini">Gemini</option>
-                    <option value="openai">OpenAI</option>
-                  </select>
-                </div>
-
-                <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Email (optional)</label>
                   <input
                     type="email"

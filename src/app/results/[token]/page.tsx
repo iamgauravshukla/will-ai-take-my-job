@@ -549,29 +549,117 @@ export default async function ResultPage({ params }: PageProps) {
           </div>
         </section>
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">Work Composition Snapshot</h2>
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5">
-            {detailedAnalysis.workComposition.map((item, index) => {
-              const toneClasses = getToneClasses(item.tone);
+        <section className="scroll-animate mb-12">
+          <h2 className="text-3xl font-bold text-slate-900 mb-2">Work Composition Snapshot</h2>
+          <p className="text-base text-slate-600 mb-8 font-medium">How automation risk breaks down across your work responsibilities</p>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-10">
+            {/* Left side - Circular Chart */}
+            <div className="flex items-center justify-center">
+              <div className="relative w-72 h-72">
+                {/* SVG Donut Chart */}
+                <svg className="w-full h-full" viewBox="0 0 240 240" style={{ transform: 'rotate(-90deg)' }}>
+                  {(() => {
+                    const total = detailedAnalysis.workComposition.reduce((sum, x) => sum + x.value, 0);
+                    const radius = 80;
+                    const innerRadius = 50;
+                    let currentAngle = 0;
+                    
+                    const colorMap = { red: '#ef4444', amber: '#f59e0b', slate: '#64748b', emerald: '#10b981' };
 
-              return (
-                <div key={index}>
-                  <div className="flex items-center justify-between gap-4 mb-2">
-                    <div className="flex items-center gap-3">
-                      <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${toneClasses.chip}`}>
-                        {item.label}
-                      </span>
-                      <p className="text-sm text-slate-600">{item.description}</p>
-                    </div>
-                    <span className="text-sm font-bold text-slate-900">{item.value}%</span>
-                  </div>
-                  <div className="h-3 rounded-full bg-slate-100 overflow-hidden">
-                    <div className={`h-full ${toneClasses.bar}`} style={{ width: `${item.value}%` }} />
-                  </div>
+                    return detailedAnalysis.workComposition.map((item, index) => {
+                      const percentage = item.value / total;
+                      const sliceAngle = percentage * 360;
+                      const startAngle = currentAngle;
+                      const endAngle = currentAngle + sliceAngle;
+                      currentAngle = endAngle;
+
+                      const startRad = (startAngle * Math.PI) / 180;
+                      const endRad = (endAngle * Math.PI) / 180;
+                      const cx = 120, cy = 120;
+
+                      const x1 = cx + radius * Math.cos(startRad);
+                      const y1 = cy + radius * Math.sin(startRad);
+                      const x2 = cx + radius * Math.cos(endRad);
+                      const y2 = cy + radius * Math.sin(endRad);
+
+                      const ix1 = cx + innerRadius * Math.cos(startRad);
+                      const iy1 = cy + innerRadius * Math.sin(startRad);
+                      const ix2 = cx + innerRadius * Math.cos(endRad);
+                      const iy2 = cy + innerRadius * Math.sin(endRad);
+
+                      const largeArc = sliceAngle > 180 ? 1 : 0;
+
+                      const pathData = [
+                        `M ${x1} ${y1}`,
+                        `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
+                        `L ${ix2} ${iy2}`,
+                        `A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${ix1} ${iy1}`,
+                        'Z'
+                      ].join(' ');
+
+                      return (
+                        <path
+                          key={index}
+                          d={pathData}
+                          fill={colorMap[item.tone]}
+                          opacity="0.9"
+                          style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}
+                          className="hover:opacity-100 transition-opacity duration-300"
+                        />
+                      );
+                    });
+                  })()}
+                </svg>
+                
+                {/* Center text - always on top */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="text-5xl font-black text-slate-900">100%</span>
+                  <span className="text-sm text-slate-600 font-semibold mt-2 uppercase tracking-wider">Your Work</span>
                 </div>
-              );
-            })}
+              </div>
+            </div>
+
+            {/* Right side - Composition Cards */}
+            <div className="flex flex-col justify-center space-y-4">
+              {detailedAnalysis.workComposition.map((item, index) => {
+                const toneClasses = getToneClasses(item.tone);
+                const icons = ['fa-solid fa-robot', 'fa-solid fa-person', 'fa-solid fa-chart-line', 'fa-solid fa-hourglass-end'];
+                const icon = icons[index] || icons[0];
+                const bgColorClasses = item.tone === 'red' ? 'border-red-200 bg-gradient-to-r from-red-50/80 to-red-50/40' : item.tone === 'amber' ? 'border-amber-200 bg-gradient-to-r from-amber-50/80 to-amber-50/40' : item.tone === 'slate' ? 'border-slate-200 bg-gradient-to-r from-slate-50/80 to-slate-50/40' : 'border-emerald-200 bg-gradient-to-r from-emerald-50/80 to-emerald-50/40';
+                const labelColor = item.tone === 'red' ? 'text-red-700' : item.tone === 'amber' ? 'text-amber-700' : item.tone === 'slate' ? 'text-slate-700' : 'text-emerald-700';
+
+                return (
+                  <div key={index} className={`relative overflow-hidden rounded-2xl border p-5 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group cursor-default shadow-md backdrop-blur-sm ${bgColorClasses}`}>
+                    <div className="relative z-10 flex items-center justify-between">
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-lg ${toneClasses.chip} flex-shrink-0 group-hover:scale-110 transition-transform`}>
+                          <i className={icon}></i>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className={`text-xs uppercase tracking-widest font-bold mb-0.5 ${labelColor}`}>{item.label}</p>
+                          <p className="text-sm text-slate-700 font-medium truncate">{item.description}</p>
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0 ml-3">
+                        <p className="text-3xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-none">{item.value}%</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Summary Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-50 to-indigo-50/40">
+            {detailedAnalysis.workComposition.map((item, index) => (
+              <div key={index} className="text-center group cursor-default">
+                <div className={`h-1.5 rounded-full mx-auto mb-3 w-8 ${getToneClasses(item.tone).bar} group-hover:w-12 transition-all`} />
+                <p className="text-xs text-slate-600 font-semibold mb-1 group-hover:text-indigo-600 transition-colors">{item.label}</p>
+                <p className="text-2xl md:text-3xl font-black text-slate-900 group-hover:text-indigo-700 transition-colors">{item.value}%</p>
+              </div>
+            ))}
           </div>
         </section>
 

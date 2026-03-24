@@ -731,37 +731,128 @@ export default async function JobDetailsPage({ params }: PageProps) {
           </div>
         </section>
 
-        <section className="mb-16 animate-slideInUp" style={{ animationDelay: '0.37s' }}>
-          <div className="flex items-center gap-2 mb-7">
-            <i className="fa-solid fa-pie-chart text-indigo-600 text-xl"></i>
-            <h2 className="text-2xl font-bold text-slate-900">Work Composition Snapshot</h2>
+        <section className="mb-20 animate-slideInUp" style={{ animationDelay: '0.37s' }}>
+          <div className="flex items-center gap-3 mb-12">
+            <i className="fa-solid fa-pie-chart text-indigo-600 text-2xl"></i>
+            <div>
+              <h2 className="text-3xl font-bold text-slate-900">Work Composition Snapshot</h2>
+              <p className="text-sm text-slate-600 font-medium mt-1">How automation impact breaks down across your key responsibilities</p>
+            </div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-9 space-y-7 hover:shadow-lg transition-shadow duration-300">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-10">
+            {/* Left side - Donut Chart */}
+            <div className="flex items-center justify-center">
+              <div className="relative w-72 h-72">
+                {/* Donut Chart SVG */}
+                <svg className="w-full h-full" viewBox="0 0 240 240" style={{ transform: 'rotate(-90deg)' }}>
+                  {(() => {
+                    const total = detailedAnalysis.workComposition.reduce((sum, x) => sum + x.value, 0);
+                    const radius = 80;
+                    const innerRadius = 50;
+                    let currentAngle = 0;
+                    
+                    const colorMap = { red: '#ef4444', amber: '#f59e0b', slate: '#64748b', emerald: '#10b981' };
+
+                    return detailedAnalysis.workComposition.map((item, index) => {
+                      const percentage = item.value / total;
+                      const sliceAngle = percentage * 360;
+                      const startAngle = currentAngle;
+                      const endAngle = currentAngle + sliceAngle;
+                      currentAngle = endAngle;
+
+                      const startRad = (startAngle * Math.PI) / 180;
+                      const endRad = (endAngle * Math.PI) / 180;
+                      const cx = 120, cy = 120;
+
+                      const x1 = cx + radius * Math.cos(startRad);
+                      const y1 = cy + radius * Math.sin(startRad);
+                      const x2 = cx + radius * Math.cos(endRad);
+                      const y2 = cy + radius * Math.sin(endRad);
+
+                      const ix1 = cx + innerRadius * Math.cos(startRad);
+                      const iy1 = cy + innerRadius * Math.sin(startRad);
+                      const ix2 = cx + innerRadius * Math.cos(endRad);
+                      const iy2 = cy + innerRadius * Math.sin(endRad);
+
+                      const largeArc = sliceAngle > 180 ? 1 : 0;
+
+                      const pathData = [
+                        `M ${x1} ${y1}`,
+                        `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
+                        `L ${ix2} ${iy2}`,
+                        `A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${ix1} ${iy1}`,
+                        'Z'
+                      ].join(' ');
+
+                      return (
+                        <path
+                          key={index}
+                          d={pathData}
+                          fill={colorMap[item.tone]}
+                          opacity="0.9"
+                          className="hover:opacity-100 transition-opacity duration-300"
+                          style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}
+                        />
+                      );
+                    });
+                  })()}
+                </svg>
+                
+                {/* Center text - always on top */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="text-5xl font-black text-slate-900">100%</span>
+                  <span className="text-sm text-slate-600 font-semibold mt-2 uppercase tracking-wider">Your Work</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right side - Composition Score Cards */}
+            <div className="flex flex-col justify-center space-y-4">
+              {detailedAnalysis.workComposition.map((item, index) => {
+                const toneClasses = getToneClasses(item.tone);
+                const icons = ['fa-solid fa-robot', 'fa-solid fa-person', 'fa-solid fa-chart-line', 'fa-solid fa-timer'];
+                const icon = icons[index] || icons[0];
+                const colorBg = item.tone === 'red' ? 'from-red-50/80 to-red-50/40' : item.tone === 'amber' ? 'from-amber-50/80 to-amber-50/40' : item.tone === 'slate' ? 'from-slate-50/80 to-slate-50/40' : 'from-emerald-50/80 to-emerald-50/40';
+                const colorBorder = item.tone === 'red' ? 'border-red-200' : item.tone === 'amber' ? 'border-amber-200' : item.tone === 'slate' ? 'border-slate-200' : 'border-emerald-200';
+                const labelColor = item.tone === 'red' ? 'text-red-700' : item.tone === 'amber' ? 'text-amber-700' : item.tone === 'slate' ? 'text-slate-700' : 'text-emerald-700';
+
+                return (
+                  <div key={index} className={`relative overflow-hidden rounded-2xl border ${colorBorder} bg-gradient-to-r ${colorBg} p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group cursor-default shadow-md`}>
+                    <div className="relative z-10 flex items-center gap-4">
+                      <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${toneClasses.chip} group-hover:scale-110 transition-transform`}>
+                        <i className={icon}></i>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-xs uppercase tracking-widest font-bold mb-1 ${labelColor}`}>{item.label}</p>
+                        <p className="text-sm text-slate-700 font-medium truncate">{item.description}</p>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-4xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-none">{item.value}%</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Detailed breakdown bars */}
+          <div className="space-y-5 p-8 rounded-2xl border border-indigo-200/40 bg-gradient-to-br from-indigo-50/50 to-blue-50/40">
+            <p className="text-sm font-bold text-indigo-900 uppercase tracking-wider mb-6">Detailed breakdown</p>
             {detailedAnalysis.workComposition.map((item, index) => {
               const toneClasses = getToneClasses(item.tone);
-
               return (
                 <div key={index} className="group">
-                  <div className="flex items-center justify-between gap-4 mb-4">
-                    <div className="flex items-center gap-3 flex-1">
-                      <span className={`inline-flex rounded-full px-4 py-2 text-xs font-bold ${toneClasses.chip}`}>
-                        {item.label}
-                      </span>
-                      <p className="text-sm font-medium text-slate-700 flex-1">{item.description}</p>
-                    </div>
-                    <span className="text-xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors whitespace-nowrap ml-auto">{item.value}%</span>
+                  <div className="flex items-center justify-between gap-4 mb-2">
+                    <label className="text-sm font-semibold text-slate-700 group-hover:text-slate-900 transition-colors">{item.label}</label>
+                    <span className="text-xs font-bold text-slate-600 bg-white/60 px-2.5 py-1 rounded-full group-hover:bg-white transition-all">{item.value}%</span>
                   </div>
-                  <div className="relative h-5 rounded-full bg-gradient-to-r from-slate-100 to-slate-50 overflow-hidden shadow-sm border border-slate-200/50">
+                  <div className="relative h-3 rounded-full bg-white/60 border border-slate-200/50 overflow-hidden shadow-sm group-hover:shadow-md transition-all">
                     <div 
-                      className={`h-full ${toneClasses.bar} transition-all duration-700 ease-out rounded-full shadow-sm`} 
+                      className={`h-full ${toneClasses.bar} transition-all duration-700 ease-out rounded-full`}
                       style={{ width: `${item.value}%` }}
                     />
-                    {/* Percentage label on bar if space available */}
-                    {item.value > 30 && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-xs font-bold text-white drop-shadow-sm">{item.value}%</span>
-                      </div>
-                    )}
                   </div>
                 </div>
               );
@@ -823,67 +914,126 @@ export default async function JobDetailsPage({ params }: PageProps) {
           </div>
         </section>
 
-        <section className="mb-16 animate-slideInUp" style={{ animationDelay: '0.46s' }}>
-          <div className="flex items-end justify-between gap-4 mb-8">
+        <section className="mb-20 animate-slideInUp" style={{ animationDelay: '0.46s' }}>
+          <div className="flex items-end justify-between gap-4 mb-10">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <i className="fa-solid fa-compass text-indigo-600 text-xl"></i>
-                <h2 className="text-2xl font-bold text-slate-900">Nearby Roles In {job.sector}</h2>
+              <div className="flex items-center gap-3 mb-3">
+                <i className="fa-solid fa-compass text-indigo-600 text-2xl"></i>
+                <h2 className="text-3xl font-bold text-slate-900">Nearby Roles In {job.sector}</h2>
               </div>
-              <p className="mt-2 text-sm text-slate-600">
-                Roles with risk profiles closest to {job.title}, useful for comparison and transition planning.
+              <p className="text-base text-slate-600 font-medium leading-relaxed">
+                Explore similar positions with comparable automation risk. Perfect for career transitions and skill planning.
               </p>
             </div>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {sectorInsights.closestRoles.map((peer) => {
+          <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-2">
+            {sectorInsights.closestRoles.slice(0, 4).map((peer) => {
               const delta = peer.automationRisk - job.automationRisk;
+              const riskColor = getRiskColor(peer.automationRisk);
+              const toneClasses = getToneClasses(getDistributionTone(peer.automationRisk));
+              const isHigher = delta > 0;
+              const isSame = delta === 0;
 
               return (
                 <Link
                   key={peer.slug}
                   href={`/jobs/${peer.slug}`}
-                  className="rounded-2xl border border-slate-200 bg-white p-7 transition-all duration-300 hover:border-indigo-300 hover:shadow-2xl hover:-translate-y-2 group cursor-pointer"
+                  className={`relative overflow-hidden rounded-3xl border transition-all duration-300 hover:shadow-3xl hover:-translate-y-3 group cursor-pointer p-8 shadow-lg ${
+                    peer.automationRisk >= 70 ? 'border-red-200 bg-gradient-to-br from-white to-red-50/30' :
+                    peer.automationRisk >= 55 ? 'border-amber-200 bg-gradient-to-br from-white to-amber-50/30' :
+                    peer.automationRisk >= 40 ? 'border-slate-200 bg-gradient-to-br from-white to-slate-50/30' :
+                    'border-emerald-200 bg-gradient-to-br from-white to-emerald-50/30'
+                  }`}
                 >
-                  {/* Header */}
-                  <div className="mb-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <i className="fa-solid fa-briefcase text-slate-400 group-hover:text-indigo-600 transition-colors text-sm"></i>
-                      <p className="text-xs uppercase tracking-wide text-slate-500">{peer.sector}</p>
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-700 transition-colors leading-tight">{peer.title}</h3>
-                  </div>
+                  {/* Decorative Background */}
+                  <div className={`absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl opacity-5 group-hover:opacity-15 transition-opacity ${toneClasses.bar}`} />
                   
-                  {/* Risk Score - Highlighted */}
-                  <div className="mb-5 p-3.5 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200/50">
-                    <div className="text-center">
-                      <p className="text-xs uppercase tracking-wide text-slate-500 font-semibold mb-1">Risk Score</p>
-                      <p className="text-4xl font-black text-slate-900">{peer.automationRisk}%</p>
-                    </div>
-                  </div>
-                  
-                  {/* Comparison Badge */}
-                  <div className="mb-4">
-                    <span className={`inline-block rounded-full px-3 py-1.5 text-xs font-semibold transition-all ${getRiskColor(peer.automationRisk).badge}`}>
-                      {delta === 0 ? '— Same band' : delta > 0 ? `+${delta}%` : `${delta}%`}
+                  {/* Corner Badge - Risk Level */}
+                  <div className="absolute top-4 right-4 z-20">
+                    <span className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold shadow-md ${
+                      peer.automationRisk >= 70 ? 'bg-red-100 text-red-700' :
+                      peer.automationRisk >= 55 ? 'bg-amber-100 text-amber-700' :
+                      peer.automationRisk >= 40 ? 'bg-slate-100 text-slate-700' :
+                      'bg-emerald-100 text-emerald-700'
+                    }`}>
+                      <i className={`text-xs ${
+                        peer.automationRisk >= 70 ? 'fa-solid fa-triangle-exclamation' :
+                        peer.automationRisk >= 55 ? 'fa-solid fa-circle-exclamation' :
+                        peer.automationRisk >= 40 ? 'fa-solid fa-minus' :
+                        'fa-solid fa-shield-check'
+                      }`}></i>
+                      {peer.riskLevel}
                     </span>
                   </div>
-                  
-                  {/* Progress bar */}
-                  <div className="relative">
-                    <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 shadow-sm border border-slate-200/50">
-                      <div 
-                        className={`h-full ${getToneClasses(getDistributionTone(peer.automationRisk)).bar} transition-all duration-500`} 
-                        style={{ width: `${peer.automationRisk}%` }}
-                      />
+
+                  <div className="relative z-10 flex flex-col h-full">
+                    {/* Title Section */}
+                    <div className="mb-6">
+                      <p className="text-xs uppercase tracking-widest text-slate-500 font-bold mb-2 group-hover:text-indigo-600 transition-colors">
+                        {peer.sector} Role
+                      </p>
+                      <h3 className="text-2xl font-black text-slate-900 group-hover:text-indigo-700 transition-colors leading-tight mb-2">
+                        {peer.title}
+                      </h3>
+                      <p className="text-sm text-slate-600 group-hover:text-slate-700 transition-colors">
+                        Automation potential analysis
+                      </p>
                     </div>
-                  </div>
-                  
-                  {/* CTA indicator */}
-                  <div className="mt-4 flex items-center justify-between text-xs text-slate-500 group-hover:text-indigo-600 transition-colors">
-                    <span>Compare role</span>
-                    <i className="fa-solid fa-arrow-right opacity-0 group-hover:opacity-100 transition-opacity -translate-x-1 group-hover:translate-x-0 transition-transform"></i>
+                    
+                    {/* Risk Score Emphasized */}
+                    <div className="mb-6 p-5 rounded-2xl bg-gradient-to-br from-white/80 to-slate-50/60 border border-slate-200/60 hover:border-indigo-300/60 transition-all">
+                      <p className="text-xs uppercase tracking-widest text-slate-500 font-bold mb-3">Automation Risk Score</p>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-6xl font-black text-slate-900 group-hover:text-indigo-700 transition-colors leading-none">{peer.automationRisk}</span>
+                        <span className="text-2xl font-bold text-slate-400 group-hover:text-indigo-500 transition-colors">%</span>
+                      </div>
+                    </div>
+                    
+                    {/* Delta Comparison */}
+                    <div className="mb-6">
+                      {!isSame && (
+                        <div className={`inline-flex items-center gap-2 rounded-full px-4 py-2 font-semibold text-sm transition-all ${
+                          isHigher ? 'bg-red-100/70 text-red-700' : 'bg-emerald-100/70 text-emerald-700'
+                        }`}>
+                          <i className={`text-lg ${
+                            isHigher ? 'fa-solid fa-arrow-up' : 'fa-solid fa-arrow-down'
+                          }`}></i>
+                          <span>{isHigher ? '+' : ''}{delta}% {isHigher ? 'higher' : 'lower'} risk</span>
+                        </div>
+                      )}
+                      {isSame && (
+                        <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 font-semibold text-sm bg-slate-100/70 text-slate-700">
+                          <i className="fa-solid fa-equals text-lg"></i>
+                          <span>Similar risk profile</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Visual Progress Bar */}
+                    <div className="mb-6">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-semibold text-slate-600">Risk Exposure</span>
+                        <span className="text-xs font-bold text-slate-900">{peer.automationRisk}%</span>
+                      </div>
+                      <div className="relative h-3.5 rounded-full bg-gradient-to-r from-slate-100 to-slate-50 border border-slate-200 overflow-hidden shadow-sm group-hover:shadow-md transition-all">
+                        <div 
+                          className={`h-full ${toneClasses.bar} transition-all duration-700 ease-out rounded-full shadow-sm relative`}
+                          style={{ width: `${peer.automationRisk}%` }}
+                        >
+                          {/* Moving shine effect on hover */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-pulse" />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Future Skills or CTA */}
+                    <div className="mt-auto pt-4 border-t border-slate-200/60 group-hover:border-indigo-300/60 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-slate-700 group-hover:text-indigo-700 transition-colors">Explore Role</span>
+                        <i className="fa-solid fa-arrow-right w-5 h-5 text-slate-400 group-hover:text-indigo-600 transition-all opacity-50 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-1 transform"></i>
+                      </div>
+                    </div>
                   </div>
                 </Link>
               );
