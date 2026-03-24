@@ -12,13 +12,17 @@ export default function ShareReport({ title, token, automationRisk }: ShareRepor
   const [copied, setCopied] = useState(false);
   const [instagramHint, setInstagramHint] = useState(false);
   const reportPath = `/results/${token}`;
-  const reportUrl = typeof window === 'undefined' ? reportPath : `${window.location.origin}${reportPath}`;
+  const displayUrl = reportPath;
 
   const shareText = `I just analyzed "${title}" on AI Take Job. This role came back with a ${automationRisk}% automation risk score.`;
 
+  const getShareUrl = () => {
+    return typeof window !== 'undefined' ? `${window.location.origin}${reportPath}` : reportPath;
+  };
+
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(reportUrl);
+      await navigator.clipboard.writeText(getShareUrl());
       setCopied(true);
       setInstagramHint(false);
       setTimeout(() => setCopied(false), 2000);
@@ -32,12 +36,12 @@ export default function ShareReport({ title, token, automationRisk }: ShareRepor
   };
 
   const shareOnX = () => {
-    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(reportUrl)}`;
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(getShareUrl())}`;
     openPopup(url);
   };
 
   const shareOnFacebook = () => {
-    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(reportUrl)}`;
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`;
     openPopup(url);
   };
 
@@ -90,7 +94,7 @@ export default function ShareReport({ title, token, automationRisk }: ShareRepor
 
         <div className="flex flex-col gap-3 rounded-2xl bg-slate-50 p-3 sm:flex-row sm:items-center">
           <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
-            <span className="block truncate">{reportUrl}</span>
+            <span className="block truncate">{displayUrl}</span>
           </div>
           <button
             type="button"

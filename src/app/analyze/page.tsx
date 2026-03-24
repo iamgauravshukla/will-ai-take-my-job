@@ -309,7 +309,7 @@ export default function AnalyzePage() {
                   <select
                     value={provider}
                     onChange={(event) => setProvider(event.target.value as 'gemini' | 'openai')}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   >
                     <option value="gemini">Gemini</option>
                     <option value="openai">OpenAI</option>
@@ -323,7 +323,7 @@ export default function AnalyzePage() {
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
                     placeholder="you@example.com"
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   />
                 </div>
 
@@ -333,7 +333,7 @@ export default function AnalyzePage() {
                     type="file"
                     accept=".pdf,.docx"
                     onChange={(event) => setResumeFile(event.target.files?.[0] || null)}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-600 file:mr-4 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-2 file:text-indigo-700"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600 file:mr-4 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-2 file:text-indigo-700"
                   />
                   <p className="text-xs text-slate-500 mt-2">If no file is uploaded, text input below is used.</p>
                 </div>
@@ -345,7 +345,7 @@ export default function AnalyzePage() {
                     onChange={(event) => setResumeText(event.target.value)}
                     placeholder="Paste your top responsibilities, tools, and current focus areas..."
                     rows={8}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
                   />
                 </div>
               </div>

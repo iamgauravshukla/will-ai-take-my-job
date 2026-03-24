@@ -37,6 +37,9 @@ export const metadata: Metadata = {
     title: "Will AI Take My Job?",
     description: "Discover your automation risk and future-proof your career",
   },
+  icons: {
+    icon: "/ai-icons.svg",
+  },
 };
 
 export default function RootLayout({
@@ -45,9 +48,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth overflow-x-hidden">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-slate-900`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-slate-900 overflow-x-hidden`}
       >
         {children}
       </body>

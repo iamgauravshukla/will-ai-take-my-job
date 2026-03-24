@@ -25,9 +25,9 @@ export function middleware(request: NextRequest) {
   const cspHeader = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com",
-    "style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com",
+    "style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com",
     "img-src 'self' data: https:",
-    "font-src 'self' data:",
+    "font-src 'self' data: https://cdnjs.cloudflare.com",
     "connect-src 'self' https://api.openai.com https://generativelanguage.googleapis.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
@@ -46,6 +46,6 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // Match all paths except static files and images
-    '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)',
+    '/((?!_next/static|_next/image|ai-icons.svg|robots.txt|sitemap.xml).*)',
   ],
 };

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
+import SimpleFooter from '@/components/SimpleFooter';
 import ShareReport from '@/components/ShareReport';
 import { dbConnect } from '@/database/mongodb/connect';
 import { Report } from '@/database/mongodb/schemas/Report';
@@ -352,7 +352,7 @@ export default async function ResultPage({ params }: PageProps) {
         />
 
         {/* Premium hero card */}
-        <div className="mb-10 rounded-3xl bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-800 p-8 md:p-10 text-white overflow-hidden relative">
+        <div className="scroll-animate mb-10 rounded-3xl bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-800 p-8 md:p-10 text-white overflow-hidden relative shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-1">
           <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, white 0%, transparent 50%)' }} />
           <div className="relative">
             <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -405,16 +405,16 @@ export default async function ResultPage({ params }: PageProps) {
         </div>
 
         {/* Summary */}
-        <section className="mb-12">
+        <section className="scroll-animate mb-12">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">Analysis Summary</h2>
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 hover:-translate-y-1">
             <p className="text-slate-700 leading-relaxed text-lg">{detailedAnalysis.executiveTakeaway || analysis.summary || 'No summary available.'}</p>
           </div>
         </section>
 
         {/* Sector Benchmark */}
-        <section className="mb-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
+        <section className="scroll-animate mb-6">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 hover:shadow-xl hover:border-indigo-200 transition-all duration-300">
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-2xl font-bold text-slate-900">Sector Benchmark</h2>
@@ -459,20 +459,20 @@ export default async function ResultPage({ params }: PageProps) {
         </section>
 
         {/* Risk Landscape */}
-        <section className="mb-12">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
+        <section className="scroll-animate mb-12">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 hover:shadow-xl hover:border-indigo-200 transition-all duration-300">
             <h2 className="text-2xl font-bold text-slate-900 mb-1">Risk Landscape: Where {report.jobTitle} Sits</h2>
             <RiskLandscape items={sectorInsights.distribution} currentScore={analysis.automationRiskScore || 0} sector={currentJobForBenchmark.sector} />
           </div>
         </section>
 
-        <section className="mb-12">
+        <section className="scroll-animate mb-12">
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Why This Score Looks Like This</h2>
           <p className="text-sm text-slate-500 mb-6">The key factors driving the automation exposure estimate for this role.</p>
           <div className="grid md:grid-cols-3 gap-5">
             {detailedAnalysis.scoreDrivers.map((driver, index) => (
-              <div key={index} className={`relative overflow-hidden rounded-2xl border bg-white p-6 ${
-                driver.strength === 'Primary' ? 'border-indigo-200' : 'border-slate-200'
+              <div key={index} className={`relative overflow-hidden rounded-2xl border bg-white p-6 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ${
+                driver.strength === 'Primary' ? 'border-indigo-200 hover:border-indigo-300 shadow-md' : 'border-slate-200 hover:border-indigo-200'
               }`}>
                 <div className={`absolute inset-y-0 left-0 w-1 rounded-l-2xl ${
                   driver.strength === 'Primary' ? 'bg-indigo-500' : 'bg-slate-300'
@@ -532,17 +532,17 @@ export default async function ResultPage({ params }: PageProps) {
         </section>
 
         {/* Skills Development */}
-        <section className="mb-12">
+        <section className="scroll-animate mb-12">
           <h2 className="text-2xl font-bold text-slate-900 mb-6">Skills to Develop & Prioritize</h2>
           <p className="text-slate-600 mb-6">Focus your learning efforts on these high-impact skills:</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {(analysis.futureSkills || []).map((skill: string, index: number) => (
-              <div key={index} className="rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-4">
+              <div key={index} className="rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-4 hover:shadow-lg hover:border-indigo-300 transition-all duration-300 hover:-translate-y-1 group">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
+                  <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm group-hover:bg-indigo-700 transition-colors">
                     {index + 1}
                   </div>
-                  <p className="font-semibold text-slate-900">{skill}</p>
+                  <p className="font-semibold text-slate-900 group-hover:text-indigo-700 transition-colors">{skill}</p>
                 </div>
               </div>
             ))}
@@ -591,76 +591,76 @@ export default async function ResultPage({ params }: PageProps) {
           </div>
         </section>
 
-        <section className="grid md:grid-cols-2 gap-8 mb-12">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
+        <section className="scroll-animate grid md:grid-cols-2 gap-8 mb-12">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 hover:shadow-xl hover:border-emerald-200 transition-all duration-300 hover:-translate-y-1">
             <h2 className="text-2xl font-bold text-slate-900 mb-4">Where Humans Keep The Edge</h2>
             <ul className="space-y-3">
               {detailedAnalysis.durableAdvantage.map((item, index) => (
-                <li key={index} className="flex gap-3">
-                  <span className="mt-1 text-emerald-500">●</span>
-                  <span className="text-slate-700 leading-6">{item}</span>
+                <li key={index} className="flex gap-3 group">
+                  <span className="mt-1 text-emerald-500 group-hover:scale-125 transition-transform">●</span>
+                  <span className="text-slate-700 leading-6 group-hover:text-slate-900 transition-colors">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 hover:-translate-y-1">
             <h2 className="text-2xl font-bold text-slate-900 mb-4">Market Signals To Watch</h2>
             <ul className="space-y-3">
               {detailedAnalysis.marketSignals.map((item, index) => (
-                <li key={index} className="flex gap-3">
-                  <span className="mt-1 text-indigo-500">●</span>
-                  <span className="text-slate-700 leading-6">{item}</span>
+                <li key={index} className="flex gap-3 group">
+                  <span className="mt-1 text-indigo-500 group-hover:scale-125 transition-transform">●</span>
+                  <span className="text-slate-700 leading-6 group-hover:text-slate-900 transition-colors">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
         </section>
 
-        <section className="mb-12">
+        <section className="scroll-animate mb-12">
           <h2 className="text-2xl font-bold text-slate-900 mb-6">Role Evolution Over The Next 24 Months</h2>
           <div className="relative">
             <div className="hidden md:block absolute top-7 left-[calc(100%/6)] right-[calc(100%/6)] h-px bg-slate-200" />
             <div className="grid md:grid-cols-3 gap-5 relative">
               {detailedAnalysis.roleEvolution.map((step, index) => (
-                <div key={index} className="rounded-2xl border border-slate-200 bg-white p-6">
+                <div key={index} className="rounded-2xl border border-slate-200 bg-white p-6 hover:shadow-xl hover:border-indigo-300 transition-all duration-300 hover:-translate-y-2 group">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-indigo-600 bg-white text-xs font-bold text-indigo-600">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-indigo-600 bg-white text-xs font-bold text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
                       {index + 1}
                     </div>
-                    <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                    <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 group-hover:bg-indigo-100 group-hover:text-indigo-700 transition-colors">
                       {step.phase}
                     </span>
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900">{step.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-600">{step.detail}</p>
+                  <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-700 transition-colors">{step.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-600 group-hover:text-slate-700 transition-colors">{step.detail}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="mb-12">
+        <section className="scroll-animate mb-12">
           <h2 className="text-2xl font-bold text-slate-900 mb-6">90-Day De-Risking Plan</h2>
           <div className="grid md:grid-cols-3 gap-5">
             {detailedAnalysis.ninetyDayPlan.map((step, index) => (
-              <div key={index} className="rounded-2xl border border-indigo-100 bg-gradient-to-b from-indigo-50 to-white p-6">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold text-white mb-4 shadow-md shadow-indigo-200">
+              <div key={index} className="rounded-2xl border border-indigo-100 bg-gradient-to-b from-indigo-50 to-white p-6 hover:shadow-xl hover:border-indigo-400 transition-all duration-300 hover:-translate-y-2 group">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold text-white mb-4 shadow-md shadow-indigo-200 group-hover:bg-indigo-700 transition-colors">
                   {index + 1}
                 </div>
-                <h3 className="text-lg font-bold text-slate-900">{step.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-slate-600">{step.detail}</p>
+                <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-700 transition-colors">{step.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600 group-hover:text-slate-700 transition-colors">{step.detail}</p>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="mb-12">
+        <section className="scroll-animate mb-12">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">Tools &amp; Workflow Focus</h2>
           <p className="text-sm text-slate-500 mb-4">Skills and tools worth prioritising to stay competitive in this role.</p>
           <div className="flex flex-wrap gap-2">
             {detailedAnalysis.toolingFocus.map((item, index) => (
-              <span key={index} className="rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-sm font-medium text-indigo-800">
+              <span key={index} className="rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-sm font-medium text-indigo-800 hover:bg-indigo-100 hover:border-indigo-300 hover:shadow-md transition-all duration-300 group">
                 {item}
               </span>
             ))}
@@ -669,7 +669,7 @@ export default async function ResultPage({ params }: PageProps) {
 
         {/* Nearby Roles */}
         {sectorInsights.closestRoles.length > 0 && (
-          <section className="mb-12">
+          <section className="scroll-animate mb-12">
             <div className="flex items-end justify-between gap-4 mb-6">
               <div>
                 <h2 className="text-2xl font-bold text-slate-900">Nearby Roles In {currentJobForBenchmark.sector}</h2>
@@ -683,12 +683,12 @@ export default async function ResultPage({ params }: PageProps) {
                   <Link
                     key={peer.slug}
                     href={`/jobs/${peer.slug}`}
-                    className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-indigo-300 hover:shadow-lg"
+                    className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-indigo-300 hover:shadow-xl hover:-translate-y-2 group"
                   >
-                    <p className="text-xs uppercase tracking-wide text-slate-500">{peer.sector}</p>
-                    <h3 className="mt-2 text-lg font-bold text-slate-900">{peer.title}</h3>
+                    <p className="text-xs uppercase tracking-wide text-slate-500 group-hover:text-indigo-600 transition-colors">{peer.sector}</p>
+                    <h3 className="mt-2 text-lg font-bold text-slate-900 group-hover:text-indigo-700 transition-colors">{peer.title}</h3>
                     <div className="mt-4 flex items-center justify-between">
-                      <span className="text-2xl font-black text-slate-900">{peer.automationRisk}%</span>
+                      <span className="text-2xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{peer.automationRisk}%</span>
                       <span className={`rounded-full px-3 py-1 text-xs font-semibold ${getRiskColor(peer.automationRisk).badge}`}>
                         {delta === 0 ? 'Same band' : delta > 0 ? `+${delta}% vs yours` : `${delta}% vs yours`}
                       </span>
@@ -705,7 +705,7 @@ export default async function ResultPage({ params }: PageProps) {
 
         {/* Skills Across Peers */}
         {sectorInsights.topSkills.length > 0 && (
-          <section className="mb-12">
+          <section className="scroll-animate mb-12">
             <h2 className="text-2xl font-bold text-slate-900 mb-4">Skills Appearing Across Peer Roles</h2>
             <p className="text-slate-600 mb-6">Frequently cited skills in similar {currentJobForBenchmark.sector} roles — worth prioritising in your development plan.</p>
             <div className="flex flex-wrap gap-3">
@@ -768,7 +768,7 @@ export default async function ResultPage({ params }: PageProps) {
           </div>
         </div>
       </section>
-      <Footer />
+      <SimpleFooter />
     </main>
   );
 }

@@ -50,7 +50,7 @@ export default function FAQSection() {
 
   return (
     <section id="faq" className="py-24 bg-gradient-to-b from-slate-50 to-white">
-      <div className="max-w-4xl mx-auto px-6">
+      <div className="mx-auto px-6" style={{ maxWidth: '992px' }}>
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 border border-amber-100 text-amber-700 text-xs font-bold mb-6 uppercase tracking-widest">
             ❓ Questions?

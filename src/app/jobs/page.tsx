@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
+import SimpleFooter from '@/components/SimpleFooter';
 import JobsExplorer from '@/components/jobs/JobsExplorer';
 import { dbConnect } from '@/database/mongodb/connect';
 import { Job } from '@/database/mongodb/schemas/Job';
@@ -67,7 +67,7 @@ export default async function JobsPage() {
           </div>
         )}
       </section>
-      <Footer />
+      <SimpleFooter />
     </main>
   );
 }

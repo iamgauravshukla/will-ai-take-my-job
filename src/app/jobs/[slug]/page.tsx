@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
+import SimpleFooter from '@/components/SimpleFooter';
 import { dbConnect } from '@/database/mongodb/connect';
 import { Job } from '@/database/mongodb/schemas/Job';
 import { getDetailedAnalysis, getToneClasses } from '@/lib/detailedAnalysis';
@@ -288,16 +288,19 @@ function BenchmarkBar({
   const toneClasses = getToneClasses(tone);
 
   return (
-    <div>
-      <div className="mb-2 flex items-center justify-between gap-4">
+    <div className="group">
+      <div className="mb-3 flex items-center justify-between gap-4">
         <div>
-          <p className="text-sm font-semibold text-slate-900">{label}</p>
+          <p className="text-sm font-semibold text-slate-900 group-hover:text-slate-700 transition-colors">{label}</p>
           <p className="text-xs text-slate-500">{note}</p>
         </div>
-        <span className="text-sm font-bold text-slate-900">{value}%</span>
+        <span className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors whitespace-nowrap">{value}%</span>
       </div>
-      <div className="h-3 overflow-hidden rounded-full bg-slate-100">
-        <div className={`h-full ${toneClasses.bar}`} style={{ width: `${value}%` }} />
+      <div className="h-5 overflow-hidden rounded-full bg-gradient-to-r from-slate-100 to-slate-50 shadow-sm border border-slate-200/50">
+        <div 
+          className={`h-full ${toneClasses.bar} transition-all duration-700 ease-out rounded-full shadow-sm group-hover:shadow-md`} 
+          style={{ width: `${value}%` }}
+        />
       </div>
     </div>
   );
@@ -498,78 +501,132 @@ export default async function JobDetailsPage({ params }: PageProps) {
   });
 
   return (
-    <main className="w-full min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <main className="w-full min-h-screen bg-white">
       <Navigation />
-      <article className="pt-28 pb-20 max-w-5xl mx-auto px-6">
+      <article className="pt-32 pb-24 max-w-5xl mx-auto px-6">
         {/* Header */}
-        <div className="flex flex-wrap items-center gap-2 mb-5">
-          <span className="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">{job.sector}</span>
+        <div className="flex flex-wrap items-center gap-2 mb-6 animate-slideInUp">
+          <span className="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700 flex items-center gap-1.5">
+            <i className="fa-solid fa-briefcase text-indigo-600"></i>
+            {job.sector}
+          </span>
           <span className="text-slate-300">·</span>
-          <span className="text-xs uppercase tracking-widest text-slate-400">AI Automation Analysis</span>
+          <span className="text-xs uppercase tracking-widest text-slate-500 flex items-center gap-1.5 font-medium">
+            <i className="fa-solid fa-robot text-slate-400"></i>
+            AI Risk Analysis
+          </span>
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
+        <h1 className="text-5xl md:text-6xl font-black text-slate-900 mb-8 leading-tight animate-slideInUp" style={{ animationDelay: '0.05s' }}>
           Will AI Replace{' '}
-          <span className="text-indigo-600">{job.title}?</span>
+          <span className="relative pb-2">
+            <span className="bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 text-transparent bg-clip-text animate-rotateGradient">{job.title}?</span>
+            <span className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-300/50 via-blue-300/50 to-transparent rounded-full"></span>
+          </span>
         </h1>
-        <p className="text-lg text-slate-500 mb-10 max-w-2xl leading-relaxed">{job.description}</p>
+        <p className="text-lg text-slate-600 mb-14 max-w-2xl leading-relaxed animate-slideInUp" style={{ animationDelay: '0.1s' }}>{job.description}</p>
 
         {/* Primary Risk Metric Card */}
-        <section className={`rounded-2xl border border-slate-200 ${riskColors.bg} p-8 mb-12`}>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <div>
-              <p className="text-sm text-slate-600 mb-3 uppercase tracking-wider">Automation Risk Score</p>
-              <div className="flex items-baseline gap-3 mb-4">
-                <span className="text-6xl font-black text-slate-900">{job.automationRisk}%</span>
-                <span className={`text-xl font-bold ${riskColors.text}`}>{job.riskLevel}</span>
+        <section className={`rounded-3xl border border-indigo-200/60 ${riskColors.bg} p-12 mb-24 animate-slideInUp hover:shadow-2xl transition-all duration-300 relative overflow-hidden`} style={{ animationDelay: '0.15s' }}>
+          {/* Subtle gradient background */}
+          <div className="absolute inset-0 opacity-5 background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(59,130,246,0.1))"></div>
+          
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-10">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-5">
+                <i className="fa-solid fa-chart-pie text-indigo-600 text-lg"></i>
+                <p className="text-sm text-slate-700 uppercase tracking-wider font-bold">Automation Risk Score</p>
               </div>
-              <RiskProgressBar score={job.automationRisk} />
+              
+              {/* Large Risk Percentage with Emphasis */}
+              <div className="mb-8 space-y-4">
+                <div className="flex items-baseline gap-5">
+                  <span className="text-9xl md:text-10xl font-black text-slate-900 leading-none drop-shadow-lg">{job.automationRisk}%</span>
+                  <div>
+                    <span className={`inline-block text-base font-bold px-5 py-2.5 rounded-full shadow-md ${riskColors.badge}`}>
+                      {job.riskLevel}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Enhanced Progress Bar with Glow */}
+              <div className="space-y-3">
+                <div className="relative">
+                  <RiskProgressBar score={job.automationRisk} />
+                  <div className="absolute -bottom-2 left-0 w-full h-2 bg-gradient-to-r from-indigo-400/20 to-transparent blur-lg"></div>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">Risk exposure across all tracked professionals</p>
+              </div>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-slate-600 mb-2">Estimated Timeline</p>
-              <p className="text-2xl font-bold text-slate-900">{job.estimatedTimeline}</p>
-              <p className="text-xs text-slate-500 mt-2">Until significant automation</p>
+            
+            {/* Timeline Section */}
+            <div className="md:border-l-2 md:border-slate-200 md:pl-10">
+              <div className="flex items-center gap-2 mb-4 justify-start md:justify-start">
+                <i className="fa-solid fa-hourglass-end text-amber-600 text-lg"></i>
+                <p className="text-sm text-slate-600 font-bold">Predicted Timeline</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-4xl font-black text-slate-900">{job.estimatedTimeline}</p>
+                <p className="text-xs text-slate-500">Before significant change</p>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Sector Benchmark */}
-        <section className="mb-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
-            <div className="mb-6 flex items-start justify-between gap-4">
+        <section className="mb-20 animate-slideInUp" style={{ animationDelay: '0.2s' }}>
+          <div className="rounded-2xl border border-slate-200 bg-white p-8 hover:shadow-2xl transition-all duration-300 shadow-lg">
+            <div className="mb-8 flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900">Sector Benchmark</h2>
-                <p className="mt-1 text-sm text-slate-500">
+                <div className="flex items-center gap-2 mb-2">
+                  <i className="fa-solid fa-chart-bar text-indigo-600 text-xl"></i>
+                  <h2 className="text-2xl font-bold text-slate-900">Sector Benchmark</h2>
+                </div>
+                <p className="mt-1 text-sm text-slate-600">
                   Live comparison against {sectorInsights.peerCount} tracked roles in {job.sector}.
                 </p>
               </div>
-              <span className="shrink-0 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">Data-backed</span>
+              <span className="shrink-0 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700 flex items-center gap-1">
+                <i className="fa-solid fa-database text-indigo-600"></i>
+                Data-backed
+              </span>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-3 mb-7">
-              <div className="rounded-xl bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-wide text-slate-500">Sector Average</p>
-                <p className="mt-2 text-3xl font-black text-slate-900">{sectorInsights.sectorAverage}%</p>
-                <p className="mt-1 text-xs text-slate-500">
+            <div className="grid gap-4 sm:grid-cols-3 mb-10">
+              <div className="rounded-xl bg-gradient-to-br from-slate-50 to-slate-100/50 p-7 hover:from-slate-100 hover:to-slate-200/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-200/60 hover:border-indigo-300 group cursor-default">
+                <div className="flex items-center gap-2 mb-4">
+                  <i className="fa-solid fa-flag text-slate-600 group-hover:text-indigo-600 transition-colors text-lg"></i>
+                  <p className="text-xs uppercase tracking-wide text-slate-600 font-bold">Sector Average</p>
+                </div>
+                <p className="mb-3 text-5xl font-black text-slate-900">{sectorInsights.sectorAverage}%</p>
+                <p className="text-xs text-slate-600 leading-relaxed">
                   This role is{' '}
-                  <span className={job.automationRisk > sectorInsights.sectorAverage ? 'text-red-600 font-semibold' : 'text-emerald-600 font-semibold'}>
+                  <span className={job.automationRisk > sectorInsights.sectorAverage ? 'text-red-600 font-bold' : 'text-emerald-600 font-bold'}>
                     {Math.abs(job.automationRisk - sectorInsights.sectorAverage)}%{' '}
                     {job.automationRisk > sectorInsights.sectorAverage ? 'above' : 'below'}
-                  </span>{' '}average
+                  </span>{' '}
+                  average
                 </p>
               </div>
-              <div className="rounded-xl bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-wide text-slate-500">Risk Percentile</p>
-                <p className="mt-2 text-3xl font-black text-slate-900">{sectorInsights.exposurePercentile}th</p>
-                <p className="mt-1 text-xs text-slate-500">{sectorInsights.exposurePercentile}% of peer roles have lower exposure</p>
+              <div className="rounded-xl bg-gradient-to-br from-slate-50 to-slate-100/50 p-7 hover:from-slate-100 hover:to-slate-200/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-indigo-200/40 hover:border-indigo-300 group cursor-default shadow-md">
+                <div className="flex items-center gap-2 mb-4">
+                  <i className="fa-solid fa-chart-line text-indigo-600 group-hover:text-indigo-700 transition-colors text-lg"></i>
+                  <p className="text-xs uppercase tracking-wide text-slate-700 font-bold">Risk Percentile</p>
+                </div>
+                <p className="mb-3 text-5xl font-black text-slate-900">{sectorInsights.exposurePercentile}th</p>
+                <p className="text-xs text-slate-600 leading-relaxed">{sectorInsights.exposurePercentile}% of peer roles have lower risk</p>
               </div>
-              <div className="rounded-xl bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-wide text-slate-500">Peer Roles</p>
-                <p className="mt-2 text-3xl font-black text-slate-900">{sectorInsights.peerCount}</p>
-                <p className="mt-1 text-xs text-slate-500">Comparable {job.sector} roles tracked</p>
+              <div className="rounded-xl bg-gradient-to-br from-slate-50 to-slate-100/50 p-7 hover:from-slate-100 hover:to-slate-200/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-indigo-200/40 hover:border-indigo-300 group cursor-default shadow-md">
+                <div className="flex items-center gap-2 mb-4">
+                  <i className="fa-solid fa-people-group text-indigo-600 group-hover:text-indigo-700 transition-colors text-lg"></i>
+                  <p className="text-xs uppercase tracking-wide text-slate-700 font-bold">Peer Roles</p>
+                </div>
+                <p className="mb-3 text-5xl font-black text-slate-900">{sectorInsights.peerCount}</p>
+                <p className="text-xs text-slate-600 leading-relaxed">{job.sector} roles in our database</p>
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
               <BenchmarkBar label={job.title} value={job.automationRisk} note="This role" tone={getDistributionTone(job.automationRisk)} />
               <BenchmarkBar label={`${job.sector} sector average`} value={sectorInsights.sectorAverage} note="Average across all tracked peer roles" tone={getDistributionTone(sectorInsights.sectorAverage)} />
               <BenchmarkBar label={sectorInsights.highestRisk.title} value={sectorInsights.highestRisk.automationRisk} note="Highest exposure in peer set" tone={getDistributionTone(sectorInsights.highestRisk.automationRisk)} />
@@ -579,79 +636,94 @@ export default async function JobDetailsPage({ params }: PageProps) {
         </section>
 
         {/* Risk Landscape */}
-        <section className="mb-12">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
-            <h2 className="text-2xl font-bold text-slate-900 mb-1">Risk Landscape: Where {job.title} Sits</h2>
+        <section className="mb-20 animate-slideInUp" style={{ animationDelay: '0.25s' }}>
+          <div className="rounded-2xl border border-slate-200 bg-white p-8 hover:shadow-2xl transition-all duration-300 shadow-lg">
+            <div className="flex items-center gap-2 mb-6">
+              <i className="fa-solid fa-mountain-sun text-indigo-600 text-xl"></i>
+              <h2 className="text-2xl font-bold text-slate-900">Risk Landscape: Where {job.title} Sits</h2>
+            </div>
             <RiskLandscape items={sectorInsights.distribution} currentScore={job.automationRisk} sector={job.sector} />
           </div>
         </section>
 
         {/* Overview Section */}
         {(job.summary || detailedAnalysis.executiveTakeaway) && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">Overview</h2>
-            <p className="text-slate-700 leading-relaxed text-lg">{detailedAnalysis.executiveTakeaway || job.summary}</p>
+          <section className="mb-16 animate-slideInUp" style={{ animationDelay: '0.28s' }}>
+            <div className="flex items-center gap-2 mb-5">
+              <i className="fa-solid fa-binoculars text-indigo-600 text-xl"></i>
+              <h2 className="text-2xl font-bold text-slate-900">Overview</h2>
+            </div>
+            <p className="text-slate-700 leading-8 text-lg bg-gradient-to-r from-indigo-50/70 to-blue-50/70 rounded-xl p-7 border-l-4 border-indigo-600 border-slate-200">{detailedAnalysis.executiveTakeaway || job.summary}</p>
           </section>
         )}
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Why This Score Looks Like This</h2>
-          <p className="text-sm text-slate-500 mb-6">The key factors driving the automation exposure estimate for this role.</p>
-          <div className="grid md:grid-cols-3 gap-5">
+        <section className="mb-20 animate-slideInUp" style={{ animationDelay: '0.31s' }}>
+          <div className="flex items-center gap-2 mb-8">
+            <i className="fa-solid fa-sliders text-indigo-600 text-xl"></i>
+            <h2 className="text-3xl font-bold text-slate-900">Why This Score Looks Like This</h2>
+          </div>
+          <p className="text-sm text-slate-600 mb-8 font-medium">The key factors driving the automation exposure estimate for this role.</p>
+          <div className="grid md:grid-cols-3 gap-6">
             {detailedAnalysis.scoreDrivers.map((driver, index) => (
-              <div key={index} className={`relative overflow-hidden rounded-2xl border bg-white p-6 ${
-                driver.strength === 'Primary' ? 'border-indigo-200' : 'border-slate-200'
+              <div key={index} className={`relative overflow-hidden rounded-2xl border bg-white p-7 hover:shadow-2xl hover:border-indigo-300 hover:-translate-y-2 transition-all duration-300 cursor-default shadow-md ${
+                driver.strength === 'Primary' ? 'border-indigo-200 shadow-lg shadow-indigo-100/50' : 'border-indigo-200/40'
               }`}>
-                <div className={`absolute inset-y-0 left-0 w-1 rounded-l-2xl ${
+                <div className={`absolute inset-y-0 left-0 w-1.5 rounded-l-2xl ${
                   driver.strength === 'Primary' ? 'bg-indigo-500' : 'bg-slate-300'
                 }`} />
-                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                  driver.strength === 'Primary' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'
-                }`}>
-                  {driver.strength} driver
-                </span>
+                <div className="flex items-center gap-2 mb-3">
+                  <i className={`text-lg ${driver.strength === 'Primary' ? 'fa-solid fa-arrow-trend-up text-indigo-600' : 'fa-solid fa-arrow-trend-down text-slate-400'}`}></i>
+                  <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${
+                    driver.strength === 'Primary' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'
+                  }`}>
+                    {driver.strength} driver
+                  </span>
+                </div>
                 <h3 className="mt-4 text-lg font-bold text-slate-900">{driver.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-slate-600">{driver.detail}</p>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{driver.detail}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* Task Risk Breakdown */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">Task-Level Risk Analysis</h2>
+        <section className="mb-20 animate-slideInUp" style={{ animationDelay: '0.34s' }}>
+          <div className="flex items-center gap-2 mb-8">
+            <i className="fa-solid fa-tasks text-indigo-600 text-xl"></i>
+            <h2 className="text-3xl font-bold text-slate-900">Task-Level Risk Analysis</h2>
+          </div>
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-2 h-2 rounded-full bg-red-500"></div>
+            <div className="rounded-2xl border border-red-200/60 bg-gradient-to-br from-white to-red-50/30 p-8 hover:shadow-2xl hover:border-red-300 hover:-translate-y-2 transition-all duration-300 shadow-md">
+              <div className="flex items-center gap-3 mb-5">
+                <i className="fa-solid fa-exclamation-triangle text-red-600 text-xl"></i>
                 <h3 className="text-lg font-bold text-slate-900">High-Risk Tasks</h3>
               </div>
-              <p className="text-sm text-slate-600 mb-4">These tasks are most likely to be automated in the near term:</p>
-              <ul className="space-y-2">
+              <p className="text-sm text-slate-600 mb-5">These tasks are most likely to be automated in the near term:</p>
+              <ul className="space-y-3">
                 {job.highRiskTasks?.map((task: string, index: number) => (
-                  <li key={index} className="flex items-start gap-3 rounded-lg bg-red-50 px-3 py-2.5">
-                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-600">
+                  <li key={index} className="flex items-start gap-3 rounded-lg bg-red-50/80 hover:bg-red-100/60 px-4 py-3 border border-red-200/40 hover:border-red-300/60 transition-all duration-200 group">
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-600 flex-shrink-0 group-hover:bg-red-600 group-hover:text-white transition-colors">
                       {index + 1}
                     </span>
-                    <span className="text-sm text-slate-700">{task}</span>
+                    <span className="text-sm text-slate-700 group-hover:text-slate-900 transition-colors">{task}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+            <div className="rounded-2xl border border-emerald-200/60 bg-gradient-to-br from-white to-emerald-50/30 p-8 hover:shadow-2xl hover:border-emerald-300 hover:-translate-y-2 transition-all duration-300 shadow-md">
+              <div className="flex items-center gap-3 mb-5">
+                <i className="fa-solid fa-shield-check text-emerald-600 text-xl"></i>
                 <h3 className="text-lg font-bold text-slate-900">Future-Proof Tasks</h3>
               </div>
-              <p className="text-sm text-slate-600 mb-4">These tasks remain resilient and will likely increase in importance:</p>
-              <ul className="space-y-2">
+              <p className="text-sm text-slate-600 mb-5">These tasks remain resilient and will likely increase in importance:</p>
+              <ul className="space-y-3">
                 {job.lowRiskTasks?.map((task: string, index: number) => (
-                  <li key={index} className="flex items-start gap-3 rounded-lg bg-emerald-50 px-3 py-2.5">
-                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-600">
-                      ✓
+                  <li key={index} className="flex items-start gap-3 rounded-lg bg-emerald-50/80 hover:bg-emerald-100/60 px-4 py-3 border border-emerald-200/40 hover:border-emerald-300/60 transition-all duration-200 group">
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs text-emerald-600 flex-shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                      <i className="fa-solid fa-check text-xs"></i>
                     </span>
-                    <span className="text-sm text-slate-700">{task}</span>
+                    <span className="text-sm text-slate-700 group-hover:text-slate-900 transition-colors">{task}</span>
                   </li>
                 ))}
               </ul>
@@ -659,25 +731,37 @@ export default async function JobDetailsPage({ params }: PageProps) {
           </div>
         </section>
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">Work Composition Snapshot</h2>
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5">
+        <section className="mb-16 animate-slideInUp" style={{ animationDelay: '0.37s' }}>
+          <div className="flex items-center gap-2 mb-7">
+            <i className="fa-solid fa-pie-chart text-indigo-600 text-xl"></i>
+            <h2 className="text-2xl font-bold text-slate-900">Work Composition Snapshot</h2>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-9 space-y-7 hover:shadow-lg transition-shadow duration-300">
             {detailedAnalysis.workComposition.map((item, index) => {
               const toneClasses = getToneClasses(item.tone);
 
               return (
-                <div key={index}>
-                  <div className="flex items-center justify-between gap-4 mb-2">
-                    <div className="flex items-center gap-3">
-                      <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${toneClasses.chip}`}>
+                <div key={index} className="group">
+                  <div className="flex items-center justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-3 flex-1">
+                      <span className={`inline-flex rounded-full px-4 py-2 text-xs font-bold ${toneClasses.chip}`}>
                         {item.label}
                       </span>
-                      <p className="text-sm text-slate-600">{item.description}</p>
+                      <p className="text-sm font-medium text-slate-700 flex-1">{item.description}</p>
                     </div>
-                    <span className="text-sm font-bold text-slate-900">{item.value}%</span>
+                    <span className="text-xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors whitespace-nowrap ml-auto">{item.value}%</span>
                   </div>
-                  <div className="h-3 rounded-full bg-slate-100 overflow-hidden">
-                    <div className={`h-full ${toneClasses.bar}`} style={{ width: `${item.value}%` }} />
+                  <div className="relative h-5 rounded-full bg-gradient-to-r from-slate-100 to-slate-50 overflow-hidden shadow-sm border border-slate-200/50">
+                    <div 
+                      className={`h-full ${toneClasses.bar} transition-all duration-700 ease-out rounded-full shadow-sm`} 
+                      style={{ width: `${item.value}%` }}
+                    />
+                    {/* Percentage label on bar if space available */}
+                    {item.value > 30 && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-xs font-bold text-white drop-shadow-sm">{item.value}%</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -686,60 +770,73 @@ export default async function JobDetailsPage({ params }: PageProps) {
         </section>
 
         {/* Skill Development Roadmap */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">Skills to Develop for Future-Proofing</h2>
-          <p className="text-slate-600 mb-6">Invest in these skills to remain competitive and irreplaceable:</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <section className="mb-20 animate-slideInUp" style={{ animationDelay: '0.4s' }}>
+          <div className="flex items-center gap-2 mb-8">
+            <i className="fa-solid fa-graduation-cap text-indigo-600 text-xl"></i>
+            <h2 className="text-3xl font-bold text-slate-900">Skills to Develop for Future-Proofing</h2>
+          </div>
+          <p className="text-slate-600 mb-7 font-medium">Invest in these skills to remain competitive and irreplaceable:</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {job.futureSkills?.map((skill: string, index: number) => (
-              <div key={index} className="rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-4">
+              <div key={index} className="rounded-xl bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200/60 p-5 hover:shadow-2xl hover:border-indigo-300 hover:-translate-y-2 transition-all duration-300 group cursor-default shadow-md">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
+                  <div className="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0 group-hover:bg-indigo-700 group-hover:scale-110 transition-all">
                     {index + 1}
                   </div>
-                  <p className="font-semibold text-slate-900">{skill}</p>
+                  <p className="font-semibold text-slate-900 group-hover:text-indigo-700 transition-colors">{skill}</p>
+                  <i className="fa-solid fa-arrow-right text-slate-300 group-hover:text-indigo-400 transition-colors ml-auto text-xs group-hover:translate-x-1 transition-transform"></i>
                 </div>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="grid md:grid-cols-2 gap-8 mb-12">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">Where Humans Keep The Edge</h2>
-            <ul className="space-y-3">
+        <section className="grid md:grid-cols-2 gap-8 mb-20 animate-slideInUp" style={{ animationDelay: '0.43s' }}>
+          <div className="rounded-2xl border border-emerald-200/50 bg-gradient-to-br from-white to-emerald-50/30 p-8 hover:shadow-2xl hover:border-emerald-300 hover:-translate-y-2 transition-all duration-300 shadow-md">
+            <div className="flex items-center gap-2 mb-6">
+              <i className="fa-solid fa-crown text-emerald-600 text-xl"></i>
+              <h2 className="text-3xl font-bold text-slate-900">Where Humans Keep The Edge</h2>
+            </div>
+            <ul className="space-y-4">
               {detailedAnalysis.durableAdvantage.map((item, index) => (
-                <li key={index} className="flex gap-3">
-                  <span className="mt-1 text-emerald-500">●</span>
-                  <span className="text-slate-700 leading-6">{item}</span>
+                <li key={index} className="flex gap-3 group">
+                  <i className="fa-solid fa-star text-emerald-500 text-lg flex-shrink-0 mt-0.5 group-hover:text-emerald-600 transition-colors"></i>
+                  <span className="text-slate-700 leading-7 group-hover:text-slate-900 transition-colors">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">Market Signals To Watch</h2>
-            <ul className="space-y-3">
+          <div className="rounded-2xl border border-blue-200/50 bg-gradient-to-br from-white to-blue-50/30 p-8 hover:shadow-2xl hover:border-blue-300 hover:-translate-y-2 transition-all duration-300 shadow-md">
+            <div className="flex items-center gap-2 mb-6">
+              <i className="fa-solid fa-radar text-blue-600 text-xl"></i>
+              <h2 className="text-3xl font-bold text-slate-900">Market Signals To Watch</h2>
+            </div>
+            <ul className="space-y-4">
               {detailedAnalysis.marketSignals.map((item, index) => (
-                <li key={index} className="flex gap-3">
-                  <span className="mt-1 text-indigo-500">●</span>
-                  <span className="text-slate-700 leading-6">{item}</span>
+                <li key={index} className="flex gap-3 group">
+                  <i className="fa-solid fa-lightbulb text-indigo-500 text-lg flex-shrink-0 mt-0.5 group-hover:text-indigo-600 transition-colors"></i>
+                  <span className="text-slate-700 leading-7 group-hover:text-slate-900 transition-colors">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
         </section>
 
-        <section className="mb-12">
-          <div className="flex items-end justify-between gap-4 mb-6">
+        <section className="mb-16 animate-slideInUp" style={{ animationDelay: '0.46s' }}>
+          <div className="flex items-end justify-between gap-4 mb-8">
             <div>
-              <h2 className="text-2xl font-bold text-slate-900">Nearby Roles In {job.sector}</h2>
+              <div className="flex items-center gap-2 mb-2">
+                <i className="fa-solid fa-compass text-indigo-600 text-xl"></i>
+                <h2 className="text-2xl font-bold text-slate-900">Nearby Roles In {job.sector}</h2>
+              </div>
               <p className="mt-2 text-sm text-slate-600">
                 Roles with risk profiles closest to {job.title}, useful for comparison and transition planning.
               </p>
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {sectorInsights.closestRoles.map((peer) => {
               const delta = peer.automationRisk - job.automationRisk;
 
@@ -747,18 +844,46 @@ export default async function JobDetailsPage({ params }: PageProps) {
                 <Link
                   key={peer.slug}
                   href={`/jobs/${peer.slug}`}
-                  className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-indigo-300 hover:shadow-lg"
+                  className="rounded-2xl border border-slate-200 bg-white p-7 transition-all duration-300 hover:border-indigo-300 hover:shadow-2xl hover:-translate-y-2 group cursor-pointer"
                 >
-                  <p className="text-xs uppercase tracking-wide text-slate-500">{peer.sector}</p>
-                  <h3 className="mt-2 text-lg font-bold text-slate-900">{peer.title}</h3>
-                  <div className="mt-4 flex items-center justify-between">
-                    <span className="text-2xl font-black text-slate-900">{peer.automationRisk}%</span>
-                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${getRiskColor(peer.automationRisk).badge}`}>
-                      {delta === 0 ? 'Same band' : delta > 0 ? `+${delta}% vs current` : `${delta}% vs current`}
+                  {/* Header */}
+                  <div className="mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <i className="fa-solid fa-briefcase text-slate-400 group-hover:text-indigo-600 transition-colors text-sm"></i>
+                      <p className="text-xs uppercase tracking-wide text-slate-500">{peer.sector}</p>
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-700 transition-colors leading-tight">{peer.title}</h3>
+                  </div>
+                  
+                  {/* Risk Score - Highlighted */}
+                  <div className="mb-5 p-3.5 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200/50">
+                    <div className="text-center">
+                      <p className="text-xs uppercase tracking-wide text-slate-500 font-semibold mb-1">Risk Score</p>
+                      <p className="text-4xl font-black text-slate-900">{peer.automationRisk}%</p>
+                    </div>
+                  </div>
+                  
+                  {/* Comparison Badge */}
+                  <div className="mb-4">
+                    <span className={`inline-block rounded-full px-3 py-1.5 text-xs font-semibold transition-all ${getRiskColor(peer.automationRisk).badge}`}>
+                      {delta === 0 ? '— Same band' : delta > 0 ? `+${delta}%` : `${delta}%`}
                     </span>
                   </div>
-                  <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100">
-                    <div className={`h-full ${getToneClasses(getDistributionTone(peer.automationRisk)).bar}`} style={{ width: `${peer.automationRisk}%` }} />
+                  
+                  {/* Progress bar */}
+                  <div className="relative">
+                    <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 shadow-sm border border-slate-200/50">
+                      <div 
+                        className={`h-full ${getToneClasses(getDistributionTone(peer.automationRisk)).bar} transition-all duration-500`} 
+                        style={{ width: `${peer.automationRisk}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* CTA indicator */}
+                  <div className="mt-4 flex items-center justify-between text-xs text-slate-500 group-hover:text-indigo-600 transition-colors">
+                    <span>Compare role</span>
+                    <i className="fa-solid fa-arrow-right opacity-0 group-hover:opacity-100 transition-opacity -translate-x-1 group-hover:translate-x-0 transition-transform"></i>
                   </div>
                 </Link>
               );
@@ -767,16 +892,20 @@ export default async function JobDetailsPage({ params }: PageProps) {
         </section>
 
         {sectorInsights.topSkills.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">Skills Appearing Across Peer Roles</h2>
+          <section className="mb-20 animate-slideInUp" style={{ animationDelay: '0.49s' }}>
+            <div className="flex items-center gap-2 mb-8">
+              <i className="fa-solid fa-network-wired text-indigo-600 text-xl"></i>
+              <h2 className="text-3xl font-bold text-slate-900">Skills Appearing Across Peer Roles</h2>
+            </div>
             <p className="text-slate-600 mb-6">
               Dynamic skill signals pulled from related roles in the same sector.
             </p>
             <div className="flex flex-wrap gap-3">
               {sectorInsights.topSkills.map((item) => (
-                <div key={item.skill} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2">
-                  <span className="text-sm font-semibold text-slate-900">{item.skill}</span>
-                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-600">{item.count}</span>
+                <div key={item.skill} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 hover:border-indigo-300 hover:bg-indigo-50/50 transition-all duration-300 group cursor-default">
+                  <i className="fa-solid fa-tag text-slate-400 group-hover:text-indigo-600 transition-colors text-xs"></i>
+                  <span className="text-sm font-semibold text-slate-900 group-hover:text-indigo-700 transition-colors">{item.skill}</span>
+                  <span className="rounded-full bg-slate-100 group-hover:bg-indigo-200 px-2 py-0.5 text-xs font-bold text-slate-600 group-hover:text-indigo-700 transition-all">{item.count}</span>
                 </div>
               ))}
             </div>
@@ -785,58 +914,91 @@ export default async function JobDetailsPage({ params }: PageProps) {
 
         {/* Detailed Content Sections */}
         {job.contentSections?.taskBreakdown && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">Detailed Task Breakdown</h2>
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
+          <section className="mb-20">
+            <h2 className="text-3xl font-bold text-slate-900 mb-8">Detailed Task Breakdown</h2>
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <p className="text-slate-700 leading-relaxed whitespace-pre-line">{job.contentSections.taskBreakdown}</p>
             </div>
           </section>
         )}
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">Role Evolution Over The Next 24 Months</h2>
+        <section className="mb-20 animate-slideInUp" style={{ animationDelay: '0.52s' }}>
+          <div className="flex items-center gap-2 mb-8">
+            <i className="fa-solid fa-timeline text-indigo-600 text-xl"></i>
+            <h2 className="text-3xl font-bold text-slate-900">Role Evolution Over The Next 24 Months</h2>
+          </div>
           <div className="relative">
-            <div className="hidden md:block absolute top-7 left-[calc(100%/6)] right-[calc(100%/6)] h-px bg-slate-200" />
+            <div className="hidden md:block absolute top-7 left-[calc(100%/6)] right-[calc(100%/6)] h-px bg-gradient-to-r from-transparent via-indigo-300 to-transparent" />
             <div className="grid md:grid-cols-3 gap-5 relative">
               {detailedAnalysis.roleEvolution.map((step, index) => (
-                <div key={index} className="rounded-2xl border border-slate-200 bg-white p-6">
+                <div key={index} className="rounded-2xl border border-slate-200 bg-white p-6 hover:shadow-2xl hover:-translate-y-2 hover:border-indigo-300 transition-all duration-300 group shadow-md">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-indigo-600 bg-white text-xs font-bold text-indigo-600">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-indigo-600 bg-indigo-50 text-xs font-bold text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
                       {index + 1}
                     </div>
-                    <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                    <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 group-hover:bg-indigo-100 group-hover:text-indigo-700 transition-all duration-300">
                       {step.phase}
                     </span>
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900">{step.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-600">{step.detail}</p>
+                  <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-700 transition-colors">{step.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-600 group-hover:text-slate-700 transition-colors">{step.detail}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">90-Day De-Risking Plan</h2>
-          <div className="grid md:grid-cols-3 gap-5">
-            {detailedAnalysis.ninetyDayPlan.map((step, index) => (
-              <div key={index} className="rounded-2xl border border-indigo-100 bg-gradient-to-b from-indigo-50 to-white p-6">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold text-white mb-4 shadow-md shadow-indigo-200">
-                  {index + 1}
+        <section className="mb-16 animate-slideInUp" style={{ animationDelay: '0.55s' }}>
+          <div className="flex items-center gap-2 mb-6">
+            <i className="fa-solid fa-rocket text-indigo-600 text-xl"></i>
+            <h2 className="text-2xl font-bold text-slate-900">90-Day De-Risking Plan</h2>
+          </div>
+          <div className="relative">
+            {/* Timeline connecting line - desktop only */}
+            <div className="hidden md:block absolute top-12 left-[calc(50%-0.5px)] right-0 h-1 bg-gradient-to-r from-indigo-200 via-indigo-300 to-transparent" style={{ width: 'calc(100% - 60px)' }} />
+            
+            <div className="grid md:grid-cols-3 gap-6 relative">
+              {detailedAnalysis.ninetyDayPlan.map((step, index) => (
+                <div key={index} className="rounded-2xl border border-indigo-100 bg-gradient-to-b from-indigo-50 to-white p-6 hover:shadow-md hover:border-indigo-200 transition-all duration-300 group">
+                  {/* Step number badge */}
+                  <div className="mb-4 inline-flex items-center justify-center">
+                    <div className="relative">
+                      {/* Glow effect */}
+                      <div className="absolute inset-0 bg-indigo-400/20 rounded-full blur-lg group-hover:bg-indigo-400/30 transition-all"></div>
+                      
+                      {/* Number circle */}
+                      <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-indigo-700 text-lg font-bold text-white shadow-md shadow-indigo-200 group-hover:shadow-lg group-hover:shadow-indigo-300 transition-all group-hover:scale-110">
+                        <span className="text-xl">{String(index + 1).padStart(2, '0')}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Content */}
+                  <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-700 transition-colors">{step.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-600 group-hover:text-slate-700 transition-colors">{step.detail}</p>
+                  
+                  {/* Timeline dot indicator for bottom - desktop only */}
+                  {index < 2 && (
+                    <div className="hidden md:flex absolute right-0 top-1/3 -translate-y-1/2 -translate-x-1/2">
+                      <div className="w-4 h-4 rounded-full border-2 border-indigo-300 bg-white shadow-md"></div>
+                    </div>
+                  )}
                 </div>
-                <h3 className="text-lg font-bold text-slate-900">{step.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-slate-600">{step.detail}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">Tools &amp; Workflow Focus</h2>
-          <p className="text-sm text-slate-500 mb-4">Skills and tools worth prioritising to stay ahead of automation in this role.</p>
+        <section className="mb-20 animate-slideInUp" style={{ animationDelay: '0.58s' }}>
+          <div className="flex items-center gap-2 mb-8">
+            <i className="fa-solid fa-wrench text-indigo-600 text-xl"></i>
+            <h2 className="text-3xl font-bold text-slate-900">Tools &amp; Workflow Focus</h2>
+          </div>
+          <p className="text-sm text-slate-500 mb-6">Skills and tools worth prioritising to stay ahead of automation in this role.</p>
           <div className="flex flex-wrap gap-2">
             {detailedAnalysis.toolingFocus.map((item, index) => (
-              <span key={index} className="rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-sm font-medium text-indigo-800">
+              <span key={index} className="rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-800 hover:border-indigo-300 hover:bg-indigo-100 hover:shadow-md transition-all duration-300 group cursor-default flex items-center gap-2 shadow-sm">
+                <i className="fa-solid fa-star text-indigo-600 text-xs"></i>
                 {item}
               </span>
             ))}
@@ -844,49 +1006,84 @@ export default async function JobDetailsPage({ params }: PageProps) {
         </section>
 
         {job.contentSections?.skillsNeeded && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">Skills Development Path</h2>
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
+          <section className="mb-16">
+            <h2 className="text-3xl font-bold text-slate-900 mb-8">Skills Development Path</h2>
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <p className="text-slate-700 leading-relaxed whitespace-pre-line">{job.contentSections.skillsNeeded}</p>
             </div>
           </section>
         )}
 
         {job.contentSections?.actionPlan && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">Actionable Recommendations</h2>
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
+          <section className="mb-16">
+            <h2 className="text-3xl font-bold text-slate-900 mb-8">Actionable Recommendations</h2>
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <p className="text-slate-700 leading-relaxed whitespace-pre-line">{job.contentSections.actionPlan}</p>
             </div>
           </section>
         )}
 
         {/* Methodology Note */}
-        <section className="rounded-2xl bg-indigo-50 border border-indigo-200 p-6 mb-12">
-          <h3 className="font-bold text-slate-900 mb-2">Research Methodology</h3>
-          <p className="text-sm text-slate-700">
-            This analysis is based on AI-driven assessment of task automation potential, industry trends, and skills evolution. 
-            Results reflect current technology capabilities and may evolve as AI advances. Personal factors including experience level, 
-            specialization, and continuous learning significantly impact individual risk.
-          </p>
+        <section className="rounded-2xl bg-gradient-to-r from-slate-50 to-indigo-50/50 border border-indigo-200/40 p-8 mb-16 animate-slideInUp shadow-md" style={{ animationDelay: '0.61s' }}>
+          <div className="flex items-start gap-3">
+            <i className="fa-solid fa-microscope text-slate-500 text-lg flex-shrink-0 mt-0.5"></i>
+            <div>
+              <h3 className="font-bold text-slate-700 mb-1 text-sm">Research Methodology</h3>
+              <p className="text-xs text-slate-600 leading-6">
+                This analysis is based on AI-driven assessment of task automation potential, industry trends, and skills evolution. 
+                Results reflect current technology capabilities and may evolve as AI advances. Personal factors including experience level, 
+                specialization, and continuous learning significantly impact individual risk.
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* CTA */}
-        <div className="rounded-2xl bg-gradient-to-br from-indigo-900 to-slate-900 p-8 text-white text-center">
-          <p className="text-indigo-300 text-sm uppercase tracking-widest mb-3">Your Turn</p>
-          <h2 className="text-2xl md:text-3xl font-bold mb-3">How exposed is your specific role?</h2>
-          <p className="text-slate-400 mb-6 max-w-md mx-auto text-sm leading-relaxed">
-            The analysis above reflects the {job.title} role in general. Get a personalized score based on your actual tasks, experience, and context.
-          </p>
-          <a
-            href="/analyze"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-white text-slate-900 px-8 py-4 font-bold text-lg hover:bg-indigo-50 transition"
-          >
-            Check My Risk Free →
-          </a>
+        <div className="rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 p-12 md:p-20 text-white text-center animate-slideInUp relative overflow-hidden shadow-2xl" style={{ animationDelay: '0.64s' }}>
+          {/* Animated background elements */}
+          <div className="absolute inset-0 opacity-20 z-0">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-400 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-400 rounded-full blur-3xl animate-blob-delayed"></div>
+          </div>
+          
+          <div className="relative z-10 max-w-2xl mx-auto">
+            <p className="text-indigo-200 text-sm uppercase tracking-widest mb-5 font-bold">Ready for your personalized assessment?</p>
+            <h2 className="text-5xl md:text-6xl font-black mb-6 leading-tight">How exposed is <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-blue-300">your specific role?</span></h2>
+            <p className="text-slate-200 mb-12 text-lg leading-relaxed">
+              Get a personalized automation risk score based on your actual tasks, experience level, and context.
+            </p>
+            
+            {/* Trust line */}
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-12 text-sm text-slate-300">
+              <span className="flex items-center gap-2">
+                <i className="fa-solid fa-check text-emerald-400"></i>
+                Free
+              </span>
+              <span className="text-slate-500">•</span>
+              <span className="flex items-center gap-2">
+                <i className="fa-solid fa-check text-emerald-400"></i>
+                No login required
+              </span>
+              <span className="text-slate-500">•</span>
+              <span className="flex items-center gap-2">
+                <i className="fa-solid fa-check text-emerald-400"></i>
+                2 minutes
+              </span>
+            </div>
+            
+            {/* CTA Button */}
+            <a
+              href="/analyze"
+              className="inline-flex items-center justify-center gap-3 rounded-2xl bg-white text-slate-900 px-12 md:px-16 py-6 font-bold text-lg md:text-xl hover:bg-indigo-50 hover:shadow-3xl hover:shadow-indigo-600/50 transition-all duration-300 transform hover:scale-110 group shadow-xl"
+            >
+              <i className="fa-solid fa-zap text-amber-500 text-xl"></i>
+              <span>Check My Risk Free</span>
+              <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+            </a>
+          </div>
         </div>
       </article>
-      <Footer />
+      <SimpleFooter />
     </main>
   );
 }
