@@ -59,7 +59,7 @@ export default function EnhancedFAQSection() {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-100 rounded-full blur-3xl opacity-10 animate-blob"></div>
       </div>
 
-      <div className="relative z-10 max-w-[1200px] mx-auto">
+      <div className="relative z-10 mx-auto" style={{ maxWidth: '992px' }}>
         {/* Header */}
         <div ref={headerRef} className="scroll-animate mb-12 md:mb-16 text-center max-w-2xl mx-auto px-2">
           <div className="inline-flex items-center gap-2 px-3 md:px-4 py-2 rounded-full bg-indigo-50 border border-indigo-200/60 text-indigo-700 text-xs font-bold uppercase tracking-widest mb-4 w-fit mx-auto">

@@ -67,43 +67,44 @@ export default function EnhancedHowItWorksSection() {
               style={{ animationDelay: `${index * 0.15}s` }}
             >
               {/* Card */}
-              <div className="relative h-full p-8 rounded-2xl border-2 border-slate-200 bg-white/80 backdrop-blur-sm hover:border-indigo-400 hover:shadow-2xl hover:shadow-indigo-200 transition-all duration-500 transform group-hover:-translate-y-3">
-                {/* Gradient accent background */}
-                <div className="absolute -top-1 -right-1 w-32 h-32 bg-gradient-to-br from-indigo-200 to-blue-200 rounded-2xl -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur"></div>
+              <div className="relative h-full p-8 rounded-3xl border-2 border-slate-200 bg-white hover:border-indigo-500 hover:bg-gradient-to-br hover:from-white hover:to-indigo-50/20 transition-all duration-300 transform group-hover:-translate-y-2">
+                
+                {/* Animated background gradient */}
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-indigo-500/0 via-indigo-400/0 to-blue-500/0 group-hover:from-indigo-500/5 group-hover:via-indigo-400/5 group-hover:to-blue-500/5 transition-all duration-300 pointer-events-none"></div>
 
-                {/* Step number background */}
-                <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-indigo-600/20 to-blue-600/20 rounded-full -z-20 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                {/* Step number background - subtle */}
+                <div className="absolute -top-2 -right-2 w-24 h-24 bg-gradient-to-br from-indigo-200/20 to-blue-200/20 rounded-full group-hover:from-indigo-200/40 group-hover:to-blue-200/40 transition-all duration-300 -z-10"></div>
 
                 {/* Step helper text */}
-                <div className="absolute top-4 right-4 text-xs font-bold text-emerald-600 bg-emerald-100/70 px-3 py-1.5 rounded-full">
+                <div className="absolute top-4 right-4 text-xs font-bold text-emerald-600 bg-emerald-100/80 px-3 py-1.5 rounded-full group-hover:bg-emerald-100 transition-all duration-300 backdrop-blur-sm">
                   {step.helper}
                 </div>
 
                 {/* Number badge */}
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-blue-600 text-white text-3xl font-black mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white text-3xl font-black mb-6 group-hover:shadow-lg group-hover:shadow-indigo-400/50 transition-all duration-300 group-hover:scale-110">
                   {step.number}
                 </div>
 
                 {/* Icon */}
-                <div className="text-5xl mb-6 text-indigo-600 group-hover:scale-110 transition-transform duration-300">
+                <div className="text-5xl mb-6 text-indigo-600 group-hover:text-indigo-700 transition-all duration-300 group-hover:scale-110 group-hover:drop-shadow-lg">
                   <i className={step.icon}></i>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-2xl font-bold text-slate-950 mb-3">{step.title}</h3>
+                <h3 className="text-2xl font-bold text-slate-950 mb-3 group-hover:text-indigo-700 transition-colors duration-300">{step.title}</h3>
 
                 {/* Description */}
-                <p className="text-slate-600 leading-relaxed mb-6">{step.description}</p>
+                <p className="text-slate-600 leading-relaxed mb-6 group-hover:text-slate-700 transition-colors duration-300">{step.description}</p>
 
                 {/* Highlight badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-100 border border-indigo-300 text-xs font-semibold text-indigo-700 group-hover:bg-indigo-200 transition-colors duration-300">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-100 border border-indigo-300 text-xs font-semibold text-indigo-700 group-hover:bg-indigo-200 group-hover:border-indigo-400 group-hover:shadow-md transition-all duration-300">
                   <i className="fa-solid fa-bolt text-xs"></i>
                   {step.highlight}
                 </div>
 
                 {/* Connecting line (hidden on last) */}
                 {index < steps.length - 1 && (
-                  <div className="absolute hidden lg:block top-1/3 -right-6 w-12 h-0.5 bg-gradient-to-r from-indigo-400 via-indigo-300 to-transparent"></div>
+                  <div className="absolute hidden lg:block top-1/3 -right-6 w-12 h-1 bg-gradient-to-r from-slate-200 via-slate-300 to-transparent group-hover:from-indigo-400 group-hover:via-indigo-300 group-hover:to-indigo-200 transition-all duration-500"></div>
                 )}
               </div>
             </div>

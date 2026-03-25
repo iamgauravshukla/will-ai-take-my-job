@@ -63,27 +63,27 @@ export default function RealImpactSection() {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="scroll-animate group rounded-2xl border-2 border-white bg-white p-8 md:p-10 hover:border-indigo-300 hover:shadow-2xl hover:shadow-indigo-200/50 transition-all duration-500 text-center hover:translate-y-[-8px] cursor-pointer"
+              className="scroll-animate group rounded-2xl border-2 border-white bg-white p-6 md:p-8 hover:border-indigo-300 hover:shadow-2xl hover:shadow-indigo-200/50 transition-all duration-500 text-center hover:translate-y-[-8px] cursor-pointer"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               {/* Icon with gradient background */}
-              <div className={`mb-6 inline-flex items-center justify-center w-18 h-18 rounded-xl bg-gradient-to-br ${stat.color} text-white text-4xl group-hover:scale-125 transition-transform duration-500 shadow-lg group-hover:shadow-2xl group-hover:shadow-indigo-200/30`}>
+              <div className={`mb-4 inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br ${stat.color} text-white text-3xl group-hover:scale-125 transition-transform duration-500 shadow-lg group-hover:shadow-2xl group-hover:shadow-indigo-200/30`}>
                 <i className={stat.icon}></i>
               </div>
 
               {/* Number */}
-              <div className="mb-3">
-                <p className={`text-5xl md:text-6xl font-black bg-gradient-to-r ${stat.color} text-transparent bg-clip-text leading-tight`}>
+              <div className="mb-2">
+                <p className={`text-4xl md:text-5xl font-black bg-gradient-to-r ${stat.color} text-transparent bg-clip-text leading-tight`}>
                   {stat.number}
                 </p>
               </div>
 
               {/* Label */}
-              <h3 className="text-lg md:text-xl font-bold text-slate-950 mb-2 group-hover:text-indigo-600 transition-colors">{stat.label}</h3>
-              <p className="text-sm md:text-base text-slate-600 group-hover:text-slate-700">{stat.description}</p>
+              <h3 className="text-base md:text-lg font-bold text-slate-950 mb-1 group-hover:text-indigo-600 transition-colors">{stat.label}</h3>
+              <p className="text-xs md:text-sm text-slate-600 group-hover:text-slate-700">{stat.description}</p>
 
               {/* Hover indicator */}
-              <div className="mt-6 h-1 w-8 mx-auto bg-gradient-to-r from-transparent via-indigo-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="mt-4 h-1 w-8 mx-auto bg-gradient-to-r from-transparent via-indigo-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
           ))}
         </div>

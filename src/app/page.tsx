@@ -60,6 +60,13 @@ export default function Home() {
           </div>
 
           <div className="text-center animate-slideInUp">
+            {/* Icon Badge */}
+            <div className="mb-6 flex justify-center">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-100 to-blue-100 border-2 border-indigo-200 text-indigo-600 text-4xl">
+                <i className="fa-solid fa-chart-line"></i>
+              </div>
+            </div>
+
             <h2 className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tight text-slate-950 mb-4 md:mb-6">
               Ready to find out where you stand?
             </h2>
@@ -98,7 +105,7 @@ export default function Home() {
               </div>
               <div className="p-3 md:p-4 rounded-lg border border-blue-200 bg-blue-50/50 hover:bg-blue-50 transition-colors">
                 <div className="flex flex-col items-center gap-2">
-                  <i className="fa-solid fa-flash text-lg md:text-xl text-blue-600"></i>
+                  <i className="fa-solid fa-bolt text-lg md:text-xl text-blue-600"></i>
                   <p className="text-xs md:text-sm font-semibold text-slate-900">Free report</p>
                 </div>
               </div>
